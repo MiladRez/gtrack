@@ -9,6 +9,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
+import ExerciseCard from "@/components/custom/ExerciseCard";
 
 export default function Push() {
 
@@ -125,47 +126,7 @@ export default function Push() {
 					))}
 				</DropdownMenuContent>
 			</DropdownMenu>
-			<table className="w-full border">
-				<thead className="flex bg-blue-400">
-					<tr className="w-1/2 px-2">
-						<th>Exercise</th>
-					</tr>
-					<tr className="w-1/2 flex justify-around">
-						<th>Set 1</th>
-						<th>Set 2</th>
-						<th>Set 3</th>
-					</tr>
-				</thead>
-				{Array.from(exerciseList).map((exercise) => (
-					<tbody className="flex py-2">
-						<tr key={exercise[0]} className="w-1/2">
-							<td className="px-2">
-								{exercise[1].name}
-							</td>
-						</tr>
-						<tr className="w-1/2 flex justify-around items-center">
-							<td className="flex gap-1">
-								<div className="flex">
-									<input name="weight" className="w-full text-center" type="number" placeholder="0" />
-									<label>x</label>
-								</div>
-								<div className="flex">
-									<input name="reps" className="w-full text-center" type="number" placeholder="0" />
-									<label>lbs</label>
-								</div>
-							</td>
-							<td className="flex">
-								<input name="weight" className="w-full text-center" type="number" placeholder="0" />
-								<input name="reps" className="w-full text-center" type="number" placeholder="0" />
-							</td>
-							<td className="flex">
-								<input name="weight" className="w-full text-center" type="number" placeholder="0" />
-								<input name="reps" className="w-full text-center" type="number" placeholder="0" />
-							</td>					
-						</tr>
-					</tbody>
-				))}
-			</table>
+			<ExerciseCard />
 		</div>
 	)
 }

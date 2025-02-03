@@ -1,13 +1,13 @@
 export default function ExerciseCard() {
 	return (
-		<table>
-			<thead>
+		<table className="grid w-full">
+			<thead className="col-span-2 flex justify-center bg-blue-400">
 				<th>Incline Bench Press</th>
 			</thead>
-			<tbody>
-				<tr>
-					<td>Set 1</td>
-					<td>
+			<tbody className="col-span-2">
+				<tr className="grid grid-cols-2">
+					<td className="text-center">Set 1</td>
+					<td className="flex">
 						<div className="flex">
 							<input name="weight" className="w-full text-center" type="number" placeholder="0" />
 							<label>x</label>
@@ -18,9 +18,9 @@ export default function ExerciseCard() {
 						</div>
 					</td>
 				</tr>
-				<tr>
-					<td>Set 2</td>
-					<td>
+				<tr className="grid grid-cols-2">
+					<td className="text-center">Set 2</td>
+					<td className="flex">
 						<div className="flex">
 							<input name="weight" className="w-full text-center" type="number" placeholder="0" />
 							<label>x</label>
@@ -31,9 +31,9 @@ export default function ExerciseCard() {
 						</div>
 					</td>
 				</tr>
-				<tr>
-					<td>Set 3</td>
-					<td>
+				<tr className="grid grid-cols-2">
+					<td className="text-center">Set 3</td>
+					<td className="flex">
 						<div className="flex">
 							<input name="weight" className="w-full text-center" type="number" placeholder="0" />
 							<label>x</label>
