@@ -10,11 +10,11 @@ export default function ExerciseCard() {
 					<td className="flex">
 						<div className="flex">
 							<input name="weight" className="w-full text-center" type="number" placeholder="0" />
-							<label>x</label>
+							<label>lbs</label>
 						</div>
 						<div className="flex">
+							<label>x</label>
 							<input name="reps" className="w-full text-center" type="number" placeholder="0" />
-							<label>lbs</label>
 						</div>
 					</td>
 				</tr>
@@ -23,11 +23,11 @@ export default function ExerciseCard() {
 					<td className="flex">
 						<div className="flex">
 							<input name="weight" className="w-full text-center" type="number" placeholder="0" />
-							<label>x</label>
+							<label>lbs</label>
 						</div>
 						<div className="flex">
+							<label>x</label>
 							<input name="reps" className="w-full text-center" type="number" placeholder="0" />
-							<label>lbs</label>
 						</div>
 					</td>
 				</tr>
@@ -36,11 +36,11 @@ export default function ExerciseCard() {
 					<td className="flex">
 						<div className="flex">
 							<input name="weight" className="w-full text-center" type="number" placeholder="0" />
-							<label>x</label>
+							<label>lbs</label>
 						</div>
 						<div className="flex">
-							<input name="reps" className="w-full text-center" type="number" placeholder="0" />
-							<label>lbs</label>
+							<label>x</label>
+							<input name="reps" className="w-full text-center" type="number" placeholder="0" />	
 						</div>
 					</td>
 				</tr>
