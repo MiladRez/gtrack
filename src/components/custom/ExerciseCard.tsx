@@ -1,46 +1,51 @@
 export default function ExerciseCard() {
 	return (
-		<table className="grid w-full">
-			<thead className="col-span-2 flex justify-center bg-blue-400">
-				<th>Incline Bench Press</th>
+		<table className="grid max-w-xl">
+			<thead className="col-span-2 flex justify-center border border-b-0 rounded-t-xl bg-slate-900">
+				<tr>
+					<th className="py-4 px-2 text-white">Incline Bench Press</th>
+				</tr>
 			</thead>
-			<tbody className="col-span-2">
-				<tr className="grid grid-cols-2">
-					<td className="text-center">Set 1</td>
-					<td className="flex">
-						<div className="flex">
-							<input name="weight" className="w-full text-center" type="number" placeholder="0" />
-							<label>lbs</label>
+			<tbody className="grid col-span-2 bg-slate-900 border rounded-b-xl">
+				<tr className="grid grid-cols-3 py-6 px-4 bg-slate-800">
+					<td className="px-2 text-lg self-center">Set 1</td>
+					<td className="flex gap-4 md:gap-6 justify-center col-span-2 px-2">
+						<div className="flex gap-2">
+							<input name="weight" className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1" type="number" pattern="[0-9]*" inputMode="numeric" placeholder="0" />
+							<label className="self-center">lbs</label>
 						</div>
-						<div className="flex">
-							<label>x</label>
-							<input name="reps" className="w-full text-center" type="number" placeholder="0" />
-						</div>
-					</td>
-				</tr>
-				<tr className="grid grid-cols-2">
-					<td className="text-center">Set 2</td>
-					<td className="flex">
-						<div className="flex">
-							<input name="weight" className="w-full text-center" type="number" placeholder="0" />
-							<label>lbs</label>
-						</div>
-						<div className="flex">
-							<label>x</label>
-							<input name="reps" className="w-full text-center" type="number" placeholder="0" />
+						<label className="self-center">x</label>
+						<div className="flex gap-2">
+							<input name="reps" className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1" type="number" pattern="[0-9]*" inputMode="numeric" placeholder="0" />
+							<label className="self-center">reps</label>
 						</div>
 					</td>
 				</tr>
-				<tr className="grid grid-cols-2">
-					<td className="text-center">Set 3</td>
-					<td className="flex">
-						<div className="flex">
-							<input name="weight" className="w-full text-center" type="number" placeholder="0" />
-							<label>lbs</label>
+				<tr className="grid grid-cols-3 py-6 px-4 bg-slate-700">
+					<td className="px-2 text-lg self-center">Set 2</td>
+					<td className="flex gap-4 md:gap-6 justify-center col-span-2">
+						<div className="flex gap-2">
+							<input name="weight" className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1" type="number" pattern="[0-9]*" inputMode="numeric" placeholder="0" />
+							<label className="self-center">lbs</label>
 						</div>
-						<div className="flex">
-							<label>x</label>
-							<input name="reps" className="w-full text-center" type="number" placeholder="0" />	
+						<label className="self-center">x</label>
+						<div className="flex gap-2">
+							<input name="reps" className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1" type="number" pattern="[0-9]*" inputMode="numeric" placeholder="0" />		
+							<label className="self-center">reps</label>
+						</div>
+					</td>
+				</tr>
+				<tr className="grid grid-cols-3 py-6 px-4 bg-slate-800 rounded-b-xl">
+					<td className="px-2 text-lg self-center">Set 3</td>
+					<td className="flex gap-4 md:gap-6 justify-center col-span-2">
+						<div className="flex gap-2">
+							<input name="weight" className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1" type="number" pattern="[0-9]*" inputMode="numeric" placeholder="0" />
+							<label className="self-center">lbs</label>
+						</div>
+						<label className="self-center">x</label>
+						<div className="flex gap-2">
+							<input name="reps" className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1" type="number" pattern="[0-9]*" inputMode="numeric" placeholder="0" />	
+							<label className="self-center">reps</label>
 						</div>
 					</td>
 				</tr>

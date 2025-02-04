@@ -109,9 +109,9 @@ export default function Push() {
 	});
 
 	return (
-		<div className="flex flex-col items-center gap-12 my-60 mx-4">
+		<div className="flex flex-col items-center gap-12 my-20 md:my-60 mx-4">
 			<DropdownMenu>
-				<DropdownMenuTrigger className="border rounded-lg px-4 py-4">
+				<DropdownMenuTrigger className="border rounded-lg px-4 py-4 bg-slate-900">
 					Add Exercise
 				</DropdownMenuTrigger>
 				<DropdownMenuContent>
