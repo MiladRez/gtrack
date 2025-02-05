@@ -14,33 +14,39 @@ export default function ExerciseCard({exercise, updateExerciseList}: ExerciseCar
 
 	console.log(displayValues)
 
-	const handleWeightChange = (set: {weight: number, reps: number}, e: React.ChangeEvent<HTMLInputElement>) => {
-		const weight = parseInt(e.target.value);
+	const handleWeightChangeOnBlur = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}) => {
+		const inputValue = e.target.value;
+		const weight = inputValue === "" ? 0 : Number(inputValue);
 		const setString = e.target.name;
+
 		updateExerciseList(id, setString, weight, set.reps)
+
 		setDisplayValues((prevState) => ({
 			...prevState,
 			[setString as keyof Exercise]: {weight: weight, reps: set.reps}
 		}));
 	}
 
-	const handleRepsChange = (set: {weight: number, reps: number} | undefined, reps: number) => {
-		updateExerciseList(id, set, set?.weight, reps)
+	const handleWeightChangeOnFocus = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}) => {
+		const setString = e.target.name;
+		setDisplayValues((prevState) => ({
+			...prevState,
+			[setString as keyof Exercise]: {weight: "", reps: set.reps}
+		}));
 	}
 
-	const handleSavingData = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}) => {
+	const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}) => {
+		const weight = e.target.value;
 		const setString = e.target.name;
 
-		if (Number.isNaN(e.target.value)) {
-			console.log("I run")
-			setDisplayValues((prevState) => ({
-				...prevState,
-				[setString as keyof Exercise]: {weight: 0, reps: set.reps}
-			}));
-			updateExerciseList(id, setString, 0, set.reps)
-		} else {
-			updateExerciseList(id, setString, set.weight, set.reps)
-		}
+		setDisplayValues((prevState) => ({
+			...prevState,
+			[setString as keyof Exercise]: {weight: weight, reps: set.reps}
+		}));
+	}
+	
+	const handleRepsChange = (set: {weight: number, reps: number} | undefined, reps: number) => {
+		updateExerciseList(id, set, set?.weight, reps)
 	}
 
 	return (
@@ -59,8 +65,9 @@ export default function ExerciseCard({exercise, updateExerciseList}: ExerciseCar
 								className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1"
 								placeholder="0"
 								value={displayValues.set1.weight}
-								onChange={(e) => handleWeightChange(set1, e)}
-								onBlur={(e) => handleSavingData(e, displayValues.set1)}
+								onChange={(e) => handleWeightChange(e, set1)}
+								onBlur={(e) => handleWeightChangeOnBlur(e, set1)}
+								onFocus={(e) => handleWeightChangeOnFocus(e, set1)}
 								name="set1"
 								type="number"
 								pattern="[0-9]*"
