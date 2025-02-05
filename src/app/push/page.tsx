@@ -11,15 +11,33 @@ import {
   } from "@/components/ui/dropdown-menu"
 import ExerciseCard from "@/components/custom/ExerciseCard";
 
+export type Exercise = {
+	id: number,
+	name: string,
+	type: "Dumbbell" | "Bar" | "Machine",
+	set1: {
+		weight: number,
+		reps: number
+	},
+	set2: {
+		weight: number,
+		reps: number
+	},
+	set3: {
+		weight: number,
+		reps: number
+	}
+}
+
+type ExerciseItem = {
+	id: number,
+	name: string,
+	type: "Dumbbell" | "Bar" | "Machine"
+}
+
 export default function Push() {
 
-	type Exercise = {
-		id: number,
-		name: string,
-		type: "Dumbbell" | "Bar" | "Machine"
-	}
-
-	const exercises: Exercise[] = [
+	const exercises: ExerciseItem[] = [
 		{
 			id: 1,
 			name: "Incline Bench Press",
@@ -79,16 +97,35 @@ export default function Push() {
 
 	const [exerciseList, setExerciseList] = useState(new Map());
 
-	const handleAddExercise = (exercise: Exercise) => {
-		if (exerciseList.get(exercise.id)) {
+	const handleAddExercise = (exerciseItem: ExerciseItem) => {
+		// check if exercise already in exerciseList list
+		if (exerciseList.get(exerciseItem.id)) {
 			console.log("Exercise already added.")
 		} else {
+			// adds selected exercise from dropdown list to exerciseList list
 			setExerciseList((prevState) => {
 				const newMap = new Map(prevState);
-				newMap.set(exercise.id, { name: exercise.name, type: exercise.type, set1: {reps: 0, weight: 0}, set2: {reps: 0, weight: 0}, set3: {reps: 0, weight: 0} })
+				const exercise: Exercise = {
+					...exerciseItem,
+					set1: {weight: 0, reps: 0},
+					set2: {weight: 0, reps: 0},
+					set3: {weight: 0, reps: 0},
+
+				};
+				newMap.set(exercise.id, exercise)
 				return newMap;
 			})
 		}
+	}
+
+	const updateExerciseList = (exerciseID: number, set: string, weight: number, reps: number) => {
+		setExerciseList((prevState) => {
+			const newMap = new Map(prevState);
+			const exercise = newMap.get(exerciseID);
+			exercise[set] = {weight: weight, reps: reps};
+			newMap.set(exerciseID, exercise);
+			return newMap;
+		})
 	}
 
 	const handleSaveSession = async () => {
@@ -105,8 +142,8 @@ export default function Push() {
 	}
 
 	useEffect(() => {
-
-	});
+		console.log(exerciseList)
+	}, [exerciseList]);
 
 	return (
 		<div className="flex flex-col items-center gap-12 my-20 md:my-60 mx-4">
@@ -126,8 +163,9 @@ export default function Push() {
 					))}
 				</DropdownMenuContent>
 			</DropdownMenu>
-			<ExerciseCard />
+			{Array.from(exerciseList).map((exercise) => (
+				<ExerciseCard key={exercise[0]} exercise={exercise[1]} updateExerciseList={updateExerciseList} />
+			))}
 		</div>
 	)
 }
-
