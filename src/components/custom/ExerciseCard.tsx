@@ -1,5 +1,5 @@
 import { Exercise } from "@/app/push/page"
-import {useState} from "react";
+import { useState } from "react";
 
 type ExerciseCardProps = {
 	exercise: Exercise,
@@ -12,147 +12,108 @@ export default function ExerciseCard({exercise, updateExerciseList}: ExerciseCar
 
 	const [displayValues, setDisplayValues] = useState({set1, set2, set3});
 
-	console.log(displayValues)
+	// Handlers for input element
 
-	const handleWeightChangeOnBlur = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}) => {
+	const handleInputOnFocus = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
+		const setString = e.target.name;
+		setDisplayValues((prevState) => ({
+			...prevState,
+			[setString as keyof Exercise]: {weight: entryType === "weight" ? "" : set.weight, reps: entryType === "weight" ? set.reps : ""}
+		}));
+	}
+
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
 		const inputValue = e.target.value;
-		const weight = inputValue === "" ? 0 : Number(inputValue);
 		const setString = e.target.name;
 
-		updateExerciseList(id, setString, weight, set.reps)
+		console.log(inputValue)
 
 		setDisplayValues((prevState) => ({
 			...prevState,
-			[setString as keyof Exercise]: {weight: weight, reps: set.reps}
+			[setString as keyof Exercise]: {weight: inputValue, reps: set.reps}
 		}));
 	}
 
-	const handleWeightChangeOnFocus = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}) => {
-		const setString = e.target.name;
-		setDisplayValues((prevState) => ({
-			...prevState,
-			[setString as keyof Exercise]: {weight: "", reps: set.reps}
-		}));
-	}
-
-	const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}) => {
-		const weight = e.target.value;
+	const handleInputOnBlur = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
+		const inputValue = e.target.value === "" ? 0 : Number(e.target.value);
 		const setString = e.target.name;
 
+		if (entryType === "weight") {
+			updateExerciseList(id, setString, inputValue, set.reps);
+		} else {
+			updateExerciseList(id, setString, set.weight, inputValue);
+		}
+		
 		setDisplayValues((prevState) => ({
 			...prevState,
-			[setString as keyof Exercise]: {weight: weight, reps: set.reps}
+			[setString as keyof Exercise]: {weight: entryType === "weight" ? inputValue : set.weight, reps: entryType === "weight" ? set.reps : inputValue}
 		}));
 	}
-	
-	const handleRepsChange = (set: {weight: number, reps: number} | undefined, reps: number) => {
-		updateExerciseList(id, set, set?.weight, reps)
+
+	function ExerciseCardInput({entryType, set, setString}: {entryType: "weight" | "reps", set: {weight: number, reps: number}, setString: string}): React.JSX.Element {
+		console.log(set.weight)
+
+		return (
+			<div className="flex flex-col">
+				<input
+					className="max-w-14 text-center text-lg text-white border border-slate-800 rounded bg-slate-950 py-1"
+					placeholder="0"
+					value={displayValues.set1.weight}
+					onFocus={(e) => handleInputOnFocus(e, set1, "weight")}
+					onChange={(e) => handleInputChange(e, set1, "weight")}
+					onBlur={(e) => handleInputOnBlur(e, set1, "weight")}
+					name="set1"
+					type="number"
+					pattern="[0-9]*"
+					inputMode="numeric"
+				/>
+				<label className="self-center uppercase">{entryType === "weight" ? "lbs" : "reps"}</label>
+			</div>
+		)
 	}
 
 	return (
 		<table className="grid max-w-xl">
-			<thead className="col-span-2 flex justify-center border border-b-0 rounded-t-xl bg-slate-900">
+			<thead className="col-span-2 flex justify-center border border-b-0 border-slate-600 rounded-t-3xl bg-slate-950 py-2">
 				<tr>
 					<th className="py-4 px-2 text-white">{ name }</th>
 				</tr>
 			</thead>
-			<tbody className="grid col-span-2 bg-slate-900 border rounded-b-xl">
-				<tr className="grid grid-cols-3 py-6 px-4 bg-slate-800">
-					<td className="px-2 text-lg self-center">Set 1</td>
-					<td className="flex gap-4 md:gap-6 justify-center col-span-2 px-2">
-						<div className="flex gap-2">
+			<tbody className="grid col-span-2 bg-slate-950 border border-t-0 border-slate-600 rounded-b-3xl">
+				<tr className="grid grid-cols-3 py-2 mx-4 border-b border-slate-800">
+					<td className="px-2 text-lg self-center uppercase">Set 1</td>
+					<td className="flex gap-4 md:gap-6 justify-end col-span-2 px-2">
+						<ExerciseCardInput entryType={"weight"} set={set1} setString="set1" />
+						{/* <ExerciseCardInput entryType={"reps"} set={set1} setString="set1" /> */}
+						<div className="flex flex-col">
 							<input
-								className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1"
+								className="max-w-14 text-center text-lg text-white border border-slate-800 rounded bg-slate-950 py-1"
 								placeholder="0"
 								value={displayValues.set1.weight}
-								onChange={(e) => handleWeightChange(e, set1)}
-								onBlur={(e) => handleWeightChangeOnBlur(e, set1)}
-								onFocus={(e) => handleWeightChangeOnFocus(e, set1)}
+								onFocus={(e) => handleInputOnFocus(e, set1, "weight")}
+								onChange={(e) => handleInputChange(e, set1, "weight")}
+								onBlur={(e) => handleInputOnBlur(e, set1, "weight")}
 								name="set1"
 								type="number"
 								pattern="[0-9]*"
 								inputMode="numeric"
 							/>
-							<label className="self-center">lbs</label>
-						</div>
-						<label className="self-center">x</label>
-						<div className="flex gap-2">
-							<input
-								className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1"
-								placeholder="0"
-								value={set1?.reps}
-								onChange={(e) => handleRepsChange(set1, parseInt(e.target.value))}
-								name="set1"
-								type="number"
-								pattern="[0-9]*"
-								inputMode="numeric"
-							/>
-							<label className="self-center">reps</label>
+							<label className="self-center uppercase">lbs</label>
 						</div>
 					</td>
 				</tr>
-				<tr className="grid grid-cols-3 py-6 px-4 bg-slate-700">
-					<td className="px-2 text-lg self-center">Set 2</td>
+				<tr className="grid grid-cols-3 py-6 mx-4 border-b border-slate-800">
+					<td className="px-2 text-lg self-center uppercase">Set 2</td>
 					<td className="flex gap-4 md:gap-6 justify-center col-span-2">
-						<div className="flex gap-2">
-							<input
-								className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1"
-								placeholder="0"
-								value={set2?.weight}
-								onChange={(e) => handleWeightChange(set2, parseInt(e.target.value))}
-								name="weight"							
-								type="number"
-								pattern="[0-9]*"
-								inputMode="numeric"								
-							/>
-							<label className="self-center">lbs</label>
-						</div>
-						<label className="self-center">x</label>
-						<div className="flex gap-2">
-							<input
-								className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1"
-								placeholder="0"
-								value={set2?.reps}
-								onChange={(e) => handleRepsChange(set1, parseInt(e.target.value))}
-								name="reps"
-								type="number"
-								pattern="[0-9]*"
-								inputMode="numeric"								
-							/>		
-							<label className="self-center">reps</label>
-						</div>
+						{/* <ExerciseCardInput entryType={"weight"} set={set2} setString="set2" />
+						<ExerciseCardInput entryType={"reps"} set={set2} setString="set2" /> */}
 					</td>
 				</tr>
-				<tr className="grid grid-cols-3 py-6 px-4 bg-slate-800 rounded-b-xl">
-					<td className="px-2 text-lg self-center">Set 3</td>
+				<tr className="grid grid-cols-3 py-6 px-4">
+					<td className="px-2 text-lg self-center uppercase">Set 3</td>
 					<td className="flex gap-4 md:gap-6 justify-center col-span-2">
-						<div className="flex gap-2">
-							<input
-								className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1"
-								placeholder="0"
-								value={set3?.weight}
-								onChange={(e) => handleWeightChange(set3, parseInt(e.target.value))}
-								name="weight"
-								type="number"
-								pattern="[0-9]*"
-								inputMode="numeric"							
-							/>
-							<label className="self-center">lbs</label>
-						</div>
-						<label className="self-center">x</label>
-						<div className="flex gap-2">
-							<input
-								className="max-w-14 text-center text-lg text-black border rounded bg-slate-200 py-1"
-								placeholder="0"
-								value={set3?.reps}
-								onChange={(e) => handleRepsChange(set1, parseInt(e.target.value))}
-								name="reps"								
-								type="number"
-								pattern="[0-9]*"
-								inputMode="numeric"								
-							/>	
-							<label className="self-center">reps</label>
-						</div>
+						{/* <ExerciseCardInput entryType={"weight"} set={set3} setString="set3" />
+						<ExerciseCardInput entryType={"reps"} set={set3} setString="set3" /> */}
 					</td>
 				</tr>
 			</tbody>
