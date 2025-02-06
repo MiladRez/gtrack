@@ -11,10 +11,7 @@ import {
   } from "@/components/ui/dropdown-menu"
 import ExerciseCard from "@/components/custom/ExerciseCard";
 
-export type Exercise = {
-	id: number,
-	name: string,
-	type: "Dumbbell" | "Bar" | "Machine",
+export type ExerciseData = {
 	set1: {
 		weight: number,
 		reps: number
@@ -27,6 +24,13 @@ export type Exercise = {
 		weight: number,
 		reps: number
 	}
+}
+
+export type Exercise = {
+	id: number,
+	name: string,
+	type: "Dumbbell" | "Bar" | "Machine",
+	data: ExerciseData
 }
 
 type ExerciseItem = {
@@ -107,10 +111,11 @@ export default function Push() {
 				const newMap = new Map(prevState);
 				const exercise: Exercise = {
 					...exerciseItem,
-					set1: {weight: 0, reps: 0},
-					set2: {weight: 0, reps: 0},
-					set3: {weight: 0, reps: 0},
-
+					data: {
+						set1: {weight: 0, reps: 0},
+						set2: {weight: 0, reps: 0},
+						set3: {weight: 0, reps: 0}
+					}
 				};
 				newMap.set(exercise.id, exercise)
 				return newMap;
@@ -118,11 +123,11 @@ export default function Push() {
 		}
 	}
 
-	const updateExerciseList = (exerciseID: number, set: string, weight: number, reps: number) => {
+	const updateExerciseList = (exerciseID: number, data: ExerciseData) => {
 		setExerciseList((prevState) => {
 			const newMap = new Map(prevState);
 			const exercise = newMap.get(exerciseID);
-			exercise[set] = {weight: weight, reps: reps};
+			exercise.data = data;
 			newMap.set(exerciseID, exercise);
 			return newMap;
 		})
