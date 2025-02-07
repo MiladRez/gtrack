@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
 	try {
 		const client = await clientPromise;
-		const db = client.db('gtrack');
+		const db = client.db("gtrack");
 		const collection = db.collection("sessions")
 
 		const data = await collection.find({}).toArray();

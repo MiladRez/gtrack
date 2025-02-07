@@ -8,7 +8,14 @@ export async function POST(request: Request) {
 		const collection = db.collection("sessions");
 
 		const body = await request.json();
-		const result = await collection.insertOne(body);
+
+		const {type, exerciseList } = body;
+
+		const result = await collection.updateOne(
+			{ type: type }, // find doc by type
+			{ $set: { exerciseList: exerciseList } }, // update exercise object
+			{ upsert: true } // if doc doesn't exist, create new one
+		);
 
 		return NextResponse.json(result, {status: 200});
 	} catch (e) {

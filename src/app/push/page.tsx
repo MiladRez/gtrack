@@ -130,20 +130,22 @@ export default function Push() {
 			exercise.data = data;
 			newMap.set(exerciseID, exercise);
 			return newMap;
-		})
+		});
+		handleSaveSession();
 	}
 
 	const handleSaveSession = async () => {
+		console.log("exerciseList: ", exerciseList)
 		await fetch("/api/addSession", {
 			method: "POST",
 			headers: {
 				"Content-type": "application/json",
 			},
 			body: JSON.stringify({
-				 type: "Push",
-				 exerciseList: exerciseList
+				type: "Push",
+				exerciseList: Object.fromEntries(exerciseList)
 			})
-		})
+		});
 	}
 
 	useEffect(() => {
