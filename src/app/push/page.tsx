@@ -152,6 +152,35 @@ export default function Push() {
 		console.log(exerciseList)
 	}, [exerciseList]);
 
+	const ExerciseIcon = ({ type }: { type: "Dumbbell" | "Bar" | "Machine" }) => {
+		switch (type) {
+			case "Dumbbell":
+				return (
+					<svg className="!w-5 !h-5 mr-[2px]">
+						<use href={`/icons.svg#dumbbell`} />
+					</svg>
+				)
+			case "Bar":
+				return (
+					<svg className="!w-6 !h-6">
+						<use href={`/icons.svg#barbell`} />
+					</svg>
+				)
+			case "Machine":
+				return (
+					<svg stroke="black" className="!w-6 !h-6">
+						<use href={`/icons.svg#machine`} />
+					</svg>
+				)
+			default:
+				return (
+					<svg className="!w-6 !h-6">
+						<use href={`/icons.svg#spinner`} />
+					</svg>
+				)
+		}
+	}
+
 	return (
 		<div className="flex flex-col items-center gap-12 my-20 md:my-60 mx-4">
 			<DropdownMenu>
@@ -161,11 +190,13 @@ export default function Push() {
 				<DropdownMenuContent>
 					{exercises.filter(excer => !exerciseList.get(excer.id))
 					.map((exercise) => (
-						<DropdownMenuItem 
+						<DropdownMenuItem
+							className="flex justify-between gap-12"
 							key={exercise.id}
 							onClick={() => handleAddExercise(exercise)}
 						>
 							{exercise.name}
+							<ExerciseIcon type={exercise.type} />
 						</DropdownMenuItem>
 					))}
 				</DropdownMenuContent>
