@@ -1,5 +1,5 @@
 import { Exercise, ExerciseData } from "@/app/push/page"
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ExerciseCardInput from "./ExerciseCardInput";
 import debounce from "lodash.debounce";
 
@@ -15,9 +15,12 @@ export default function ExerciseCard({exercise, updateExerciseList}: ExerciseCar
 	const [displayValues, setDisplayValues] = useState(data);
 
 	// delays function call to post to db by 500ms
-	const debouncedUpdate = debounce(() => {
-		updateExerciseList(id, displayValues);
-	}, 500);
+	const debouncedUpdate = useCallback(
+		debounce((updatedValues: ExerciseData) => {
+			updateExerciseList(id, updatedValues);
+		}, 500),
+		[id]
+	);
 
 	return (
 		<table className="grid w-full max-w-xl">

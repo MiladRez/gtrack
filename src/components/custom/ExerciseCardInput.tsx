@@ -27,7 +27,7 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, debo
 	}
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
-		const inputValue = e.target.value;
+		const inputValue = e.target.value === "" ? "" : Number(e.target.value);
 		const setString = e.target.name;
 
 		setDisplayValues((prevState: ExerciseData) => ({
@@ -35,6 +35,7 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, debo
 			[setString as keyof ExerciseData]:
 				entryType === "weight" ? {weight: inputValue, reps: set.reps} : {weight: set.weight, reps: inputValue}
 		}));
+		setFinalValue(displayValues);
 	}
 
 	const handleInputOnBlur = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
@@ -46,12 +47,10 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, debo
 			[setString as keyof ExerciseData]:
 				entryType === "weight" ? { weight: inputValue, reps: set.reps } : { weight: set.weight, reps: inputValue }
 		}));
-		// final value to be saved to db
-		setFinalValue(displayValues);
 	}
 
 	useEffect(() => {
-		debouncedUpdate();
+		debouncedUpdate(displayValues);
 	}, [finalValue]);
 
 	return (
