@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -26,14 +26,14 @@ export type ExerciseData = {
 }
 
 export type Exercise = {
-	id: number,
+	id: string,
 	name: string,
 	type: "Dumbbell" | "Bar" | "Machine",
 	data: ExerciseData
 }
 
 type ExerciseItem = {
-	id: number,
+	id: string,
 	name: string,
 	type: "Dumbbell" | "Bar" | "Machine"
 }
@@ -42,57 +42,57 @@ export default function Push() {
 
 	const exercises: ExerciseItem[] = [
 		{
-			id: 1,
+			id: "1",
 			name: "Incline Bench Press",
 			type: "Bar"
 		},
 		{
-			id: 2,
+			id: "2",
 			name: "Incline Bench Press",
 			type: "Dumbbell"
 		},
 		{
-			id: 3,
+			id: "3",
 			name: "Flat Bench Press",
 			type: "Bar"
 		},
 		{
-			id: 4,
+			id: "4",
 			name: "Flat Bench Press",
 			type: "Dumbbell"
 		},
 		{
-			id: 5,
+			id: "5",
 			name: "Machine Chest Press",
 			type: "Machine"
 		},
 		{
-			id: 6,
+			id: "6",
 			name: "Chest Fly",
 			type: "Machine"
 		},
 		{
-			id: 7,
+			id: "7",
 			name: "Machine Shoulder Press",
 			type: "Machine"
 		},
 		{
-			id: 8,
+			id: "8",
 			name: "Shoulder Lateral Raises",
 			type: "Dumbbell"
 		},
 		{
-			id: 9,
+			id: "9",
 			name: "Tricep Pull Down",
 			type: "Machine"
 		},
 		{
-			id: 10,
+			id: "10",
 			name: "Overhead Tricep Extension",
 			type: "Machine"
 		},
 		{
-			id: 11,
+			id: "11",
 			name: "Dips",
 			type: "Machine"
 		},
@@ -118,29 +118,28 @@ export default function Push() {
 				};
 				newMap.set(exercise.id, exercise)
 				return newMap;
-			})
+			});
 		}
 	}
 
-	const updateExerciseList = (exerciseID: number, data: ExerciseData) => {
-		setExerciseList((prevState) => {
-			const newMap = new Map(prevState);
-			const exercise = newMap.get(exerciseID);
-			exercise.data = data;
-			newMap.set(exerciseID, exercise);
-			return newMap;
-		});
+	const updateExerciseList = (exerciseID: string, data: ExerciseData) => {
+		const newMap = new Map(exerciseList);
+		const exercise = newMap.get(exerciseID);
+		exercise.data = data;
+		newMap.set(exerciseID, exercise);
+		setExerciseList(newMap);
+		handleSaveSession(newMap); // save to DB
 	}
 
-	const removeExercise = (exerciseID: number) => {
-		setExerciseList((prevState) => {
-			const newMap = new Map(prevState);
-			newMap.delete(exerciseID);
-			return newMap;
-		});
+	const removeExercise = (exerciseID: string) => {
+		const newMap = new Map(exerciseList);
+		newMap.delete(exerciseID.toString());
+		setExerciseList(newMap);
+		handleSaveSession(newMap); // save to DB
 	}
 
-	const handleSaveSession = async () => {
+	const handleSaveSession = async (exerciseList: Map<Exercise["id"], Exercise >) => {
+		console.log(exerciseList)
 		await fetch("/api/addSession", {
 			method: "POST",
 			headers: {
@@ -148,14 +147,31 @@ export default function Push() {
 			},
 			body: JSON.stringify({
 				type: "Push",
-				exerciseList: Object.fromEntries(exerciseList)
+				exerciseList: Object.fromEntries(exerciseList),
 			})
 		});
 	}
 
+	useEffect(() => {
+		const getTodaysSession = async () => {
+			try {
+				const response = await fetch("/api/getTodaysSession");
+				if (!response.ok) throw new Error("Failed to fetch data.");
+
+				const data = await response.json();
+				if (data) {
+					const dataMap = new Map(Object.entries(data.exerciseList)); // API response returns object, convert object to Map
+					setExerciseList(new Map(dataMap));
+				}
+			} catch (error) {
+				console.error("Error fetching today's session: ", error);
+			}
+		};
+		getTodaysSession();
+	}, []);
+
 	useEffectSkipFirstRender(() => {
 		console.log(exerciseList)
-		handleSaveSession();
 	}, [exerciseList]);
 
 	const ExerciseIcon = ({ type }: { type: "Dumbbell" | "Bar" | "Machine" }) => {

@@ -12,7 +12,7 @@ type ExerciseCardProps = {
 
 export default function ExerciseCard({exercise, updateExerciseList, removeExercise}: ExerciseCardProps) {
 	
-	const {id, name, type, data} = exercise;
+	const {id, name, type, data}: Exercise = exercise;
 
 	const [displayValues, setDisplayValues] = useState(data);
 
@@ -74,24 +74,24 @@ export default function ExerciseCard({exercise, updateExerciseList, removeExerci
 				<div className="grid grid-cols-3">
 					<h2 className="px-2 text-lg self-center uppercase">Set 1</h2>
 					<div className="flex gap-4 md:gap-6 justify-end col-span-2 px-2">
-						<ExerciseCardInput id={id} displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set1" entryType="weight" />
-						<ExerciseCardInput id={id} displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set1" entryType="reps" />
+						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set1" entryType="weight" />
+						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set1" entryType="reps" />
 					</div>
 				</div>
 				<Separator className="bg-slate-600 my-6" />
 				<div className="grid grid-cols-3">
 					<h2 className="px-2 text-lg self-center uppercase">Set 2</h2>
 					<div className="flex gap-4 md:gap-6 justify-end col-span-2 px-2">
-						<ExerciseCardInput id={id} displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set2" entryType="weight" />
-						<ExerciseCardInput id={id} displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set2" entryType="reps" />
+						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set2" entryType="weight" />
+						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set2" entryType="reps" />
 					</div>
 				</div>
 				<Separator className="bg-slate-600 my-6" />
 				<div className="grid grid-cols-3">
 					<h2 className="px-2 text-lg self-center uppercase">Set 3</h2>
 					<div className="flex gap-4 md:gap-6 justify-end col-span-2 px-2">
-						<ExerciseCardInput id={id} displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set3" entryType="weight" />
-						<ExerciseCardInput id={id} displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set3" entryType="reps" />
+						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set3" entryType="weight" />
+						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set3" entryType="reps" />
 					</div>
 				</div>
 			</div>

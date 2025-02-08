@@ -3,7 +3,6 @@ import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
 import {useEffect, useRef, useState} from "react";
 
 type ExerciseCardInputProps = {
-	id: number,
 	displayValues: ExerciseData,
 	setDisplayValues: Function,
 	debouncedUpdate: Function,
