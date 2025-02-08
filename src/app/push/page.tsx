@@ -1,15 +1,14 @@
 'use client';
 
-import {useEffect, useState} from "react";
+import { useState } from "react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import ExerciseCard from "@/components/custom/ExerciseCard";
+import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
 
 export type ExerciseData = {
 	set1: {
@@ -131,11 +130,17 @@ export default function Push() {
 			newMap.set(exerciseID, exercise);
 			return newMap;
 		});
-		handleSaveSession();
+	}
+
+	const removeExercise = (exerciseID: number) => {
+		setExerciseList((prevState) => {
+			const newMap = new Map(prevState);
+			newMap.delete(exerciseID);
+			return newMap;
+		});
 	}
 
 	const handleSaveSession = async () => {
-		console.log("exerciseList: ", exerciseList)
 		await fetch("/api/addSession", {
 			method: "POST",
 			headers: {
@@ -148,8 +153,9 @@ export default function Push() {
 		});
 	}
 
-	useEffect(() => {
+	useEffectSkipFirstRender(() => {
 		console.log(exerciseList)
+		handleSaveSession();
 	}, [exerciseList]);
 
 	const ExerciseIcon = ({ type }: { type: "Dumbbell" | "Bar" | "Machine" }) => {
@@ -157,25 +163,25 @@ export default function Push() {
 			case "Dumbbell":
 				return (
 					<svg className="!w-5 !h-5 mr-[2px]">
-						<use href={`/icons.svg#dumbbell`} />
+						<use href="/icons.svg#dumbbell" />
 					</svg>
 				)
 			case "Bar":
 				return (
 					<svg className="!w-6 !h-6">
-						<use href={`/icons.svg#barbell`} />
+						<use href="/icons.svg#barbell" />
 					</svg>
 				)
 			case "Machine":
 				return (
 					<svg stroke="black" className="!w-6 !h-6">
-						<use href={`/icons.svg#machine`} />
+						<use href="/icons.svg#machine" />
 					</svg>
 				)
 			default:
 				return (
 					<svg className="!w-6 !h-6">
-						<use href={`/icons.svg#spinner`} />
+						<use href="/icons.svg#spinner" />
 					</svg>
 				)
 		}
@@ -202,7 +208,7 @@ export default function Push() {
 				</DropdownMenuContent>
 			</DropdownMenu>
 			{Array.from(exerciseList).map((exercise) => (
-				<ExerciseCard key={exercise[0]} exercise={exercise[1]} updateExerciseList={updateExerciseList} />
+				<ExerciseCard key={exercise[0]} exercise={exercise[1]} updateExerciseList={updateExerciseList} removeExercise={removeExercise} />
 			))}
 		</div>
 	)

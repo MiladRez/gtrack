@@ -1,5 +1,6 @@
 import {ExerciseData} from "@/app/push/page";
-import {useEffect, useState} from "react";
+import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
+import {useEffect, useRef, useState} from "react";
 
 type ExerciseCardInputProps = {
 	id: number,
@@ -49,7 +50,7 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, debo
 		}));
 	}
 
-	useEffect(() => {
+	useEffectSkipFirstRender(() => {
 		debouncedUpdate(displayValues);
 	}, [finalValue]);
 
