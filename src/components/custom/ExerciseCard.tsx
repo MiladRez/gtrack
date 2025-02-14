@@ -1,8 +1,8 @@
-import { Exercise, ExerciseData } from "@/app/push/page"
 import {useCallback, useEffect, useState} from "react";
 import ExerciseCardInput from "./ExerciseCardInput";
 import debounce from "lodash.debounce";
 import {Separator} from "../ui/separator";
+import {Exercise, ExerciseData} from "@/utils/ExerciseTypes";
 
 type ExerciseCardProps = {
 	exercise: Exercise,

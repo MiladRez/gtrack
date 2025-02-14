@@ -1,6 +1,6 @@
-import {ExerciseData} from "@/app/push/page";
 import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
-import {useEffect, useRef, useState} from "react";
+import {ExerciseData} from "@/utils/ExerciseTypes";
+import {useState} from "react";
 
 type ExerciseCardInputProps = {
 	displayValues: ExerciseData,

@@ -1,7 +1,17 @@
 import clientPromise from "@/libs/mongodb";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: Request) {
+
+	const {searchParams} = new URL(request.url);
+	const exerciseType = searchParams.get("type");
+
+	if (!exerciseType) {
+		return NextResponse.json(
+			{error: "Missing type parameter"},
+			{status: 400}
+		)
+	}
 
 	const today = new Date();
 
@@ -17,6 +27,7 @@ export async function GET() {
 		const collection = db.collection("sessions")
 
 		const data = await collection.findOne({
+			type: exerciseType,
 			date: {$gte: dayStart, $lt: dayEnd}
 		});
 

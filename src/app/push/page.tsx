@@ -9,34 +9,12 @@ import {
   } from "@/components/ui/dropdown-menu"
 import ExerciseCard from "@/components/custom/ExerciseCard";
 import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
-
-export type ExerciseData = {
-	set1: {
-		weight: number,
-		reps: number
-	},
-	set2: {
-		weight: number,
-		reps: number
-	},
-	set3: {
-		weight: number,
-		reps: number
-	}
-}
-
-export type Exercise = {
-	id: string,
-	name: string,
-	type: "Dumbbell" | "Bar" | "Machine",
-	data: ExerciseData
-}
-
-type ExerciseItem = {
-	id: string,
-	name: string,
-	type: "Dumbbell" | "Bar" | "Machine"
-}
+import {Exercise, ExerciseData, ExerciseItem} from "@/utils/ExerciseTypes";
+import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIconDropdownMenu";
+import axios from "axios";
+import Link from "next/link";
+import {Button} from "@/components/ui/button";
+import {ChevronLeft} from "lucide-react";
 
 export default function Push() {
 
@@ -140,25 +118,24 @@ export default function Push() {
 
 	const handleSaveSession = async (exerciseList: Map<Exercise["id"], Exercise >) => {
 		console.log(exerciseList)
-		await fetch("/api/addSession", {
-			method: "POST",
+		await axios.post("/api/addSession", {
+			type: "Push",
+			exerciseList: Object.fromEntries(exerciseList)
+		}, {
 			headers: {
-				"Content-type": "application/json",
-			},
-			body: JSON.stringify({
-				type: "Push",
-				exerciseList: Object.fromEntries(exerciseList),
-			})
+				"Content-Type": "application/json"
+			}
 		});
 	}
 
 	useEffect(() => {
 		const getTodaysSession = async () => {
 			try {
-				const response = await fetch("/api/getTodaysSession");
-				if (!response.ok) throw new Error("Failed to fetch data.");
+				const response = await axios.get("/api/getTodaysSession", {
+					params: { type: "Push" }
+				});
 
-				const data = await response.json();
+				const data = await response.data;
 				if (data) {
 					const dataMap = new Map(Object.entries(data.exerciseList)); // API response returns object, convert object to Map
 					setExerciseList(new Map(dataMap));
@@ -174,58 +151,39 @@ export default function Push() {
 		console.log(exerciseList)
 	}, [exerciseList]);
 
-	const ExerciseIcon = ({ type }: { type: "Dumbbell" | "Bar" | "Machine" }) => {
-		switch (type) {
-			case "Dumbbell":
-				return (
-					<svg className="!w-5 !h-5 mr-[2px]">
-						<use href="/icons.svg#dumbbell" />
-					</svg>
-				)
-			case "Bar":
-				return (
-					<svg className="!w-6 !h-6">
-						<use href="/icons.svg#barbell" />
-					</svg>
-				)
-			case "Machine":
-				return (
-					<svg stroke="black" className="!w-6 !h-6">
-						<use href="/icons.svg#machine" />
-					</svg>
-				)
-			default:
-				return (
-					<svg className="!w-6 !h-6">
-						<use href="/icons.svg#spinner" />
-					</svg>
-				)
-		}
-	}
-
 	return (
-		<div className="flex flex-col items-center gap-12 my-20 md:my-60 mx-4">
-			<DropdownMenu>
-				<DropdownMenuTrigger className="border rounded-lg px-4 py-4 bg-slate-950">
-					Add Exercise
-				</DropdownMenuTrigger>
-				<DropdownMenuContent>
-					{exercises.filter(excer => !exerciseList.get(excer.id))
-					.map((exercise) => (
-						<DropdownMenuItem
-							className="flex justify-between gap-12"
-							key={exercise.id}
-							onClick={() => handleAddExercise(exercise)}
-						>
-							{exercise.name}
-							<ExerciseIcon type={exercise.type} />
-						</DropdownMenuItem>
-					))}
-				</DropdownMenuContent>
-			</DropdownMenu>
-			{Array.from(exerciseList).map((exercise) => (
-				<ExerciseCard key={exercise[0]} exercise={exercise[1]} updateExerciseList={updateExerciseList} removeExercise={removeExercise} />
-			))}
+		<div className="w-screen flex justify-center">
+			<div className="max-w-screen-md w-full flex flex-col items-center gap-12 mx-4">
+				<Link href="/" className="self-start">
+					<Button variant="outline" size="icon" className="bg-slate-900 border-slate-700 sm:mt-20">
+						<ChevronLeft />
+					</Button>
+				</Link>
+				<h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+					Push
+				</h2>
+				<DropdownMenu>
+					<DropdownMenuTrigger className="px-6 py-4 bg-slate-900 border border-slate-700 rounded-lg sm:mt-20">
+						Add Exercise
+					</DropdownMenuTrigger>
+					<DropdownMenuContent>
+						{exercises.filter(excer => !exerciseList.get(excer.id))
+						.map((exercise) => (
+							<DropdownMenuItem
+								className="flex justify-between gap-12"
+								key={exercise.id}
+								onClick={() => handleAddExercise(exercise)}
+							>
+								{exercise.name}
+								<ExerciseIconDropdownMenu type={exercise.type} />
+							</DropdownMenuItem>
+						))}
+					</DropdownMenuContent>
+				</DropdownMenu>
+				{Array.from(exerciseList).map((exercise) => (
+					<ExerciseCard key={exercise[0]} exercise={exercise[1]} updateExerciseList={updateExerciseList} removeExercise={removeExercise} />
+				))}
+			</div>
 		</div>
 	)
 }
