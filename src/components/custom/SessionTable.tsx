@@ -1,22 +1,22 @@
 import {Exercise, ExerciseData} from "@/utils/ExerciseTypes"
+import {JSX} from "react";
 
-export default function SessionTable({session}: {session: {_id: string, type: string, date: Date, exerciseList: Exercise}}) {
+export default function SessionTable({session}: {session: {_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}}) {
 
-	const exerciseList = new Map(Object.entries(session.exerciseList));
+	const exerciseList = new Map<string, Exercise>(Object.entries(session.exerciseList));
 	
 	let exercisesData = [];
 
 	for (const exercise of exerciseList.values()) {
-		// let exerciseData = []
-		// exerciseData[0] = exercise.name;
-		// exerciseData[1] = exercise.data.set1.weight;
-		// exerciseData[2] = exercise.data.set1.reps;
-		// exerciseData[3] = exercise.data.set2.weight;
-		// exerciseData[4] = exercise.data.set2.reps;
-		// exerciseData[5] = exercise.data.set3.weight;
-		// exerciseData[6] = exercise.data.set3.reps;
-		// exercisesData.push(exerciseData);
-		console.log(exerciseList)
+		let exerciseData = []
+		exerciseData[0] = exercise.name;
+		exerciseData[1] = exercise.data.set1.weight;
+		exerciseData[2] = exercise.data.set1.reps;
+		exerciseData[3] = exercise.data.set2.weight;
+		exerciseData[4] = exercise.data.set2.reps;
+		exerciseData[5] = exercise.data.set3.weight;
+		exerciseData[6] = exercise.data.set3.reps;
+		exercisesData.push(exerciseData);
 	}
 
 	return (
@@ -59,21 +59,22 @@ export default function SessionTable({session}: {session: {_id: string, type: st
 						Reps
 					</header>								
 				</div>
-				<div className="grid grid-cols-7">
-					{exercisesData.map((exercise, index) => {
-						return (
-							<div key={index}>
-								<>
-									{exercise.map((data, index) => {
-										<div key={index}>
-											{data}
-										</div>
-									})}
-								</>
+				{exercisesData.map((exercise, index) => {
+					return (
+						<div key={index} className="grid grid-cols-7">
+							<div className="border flex justify-center items-center text-center">
+								{exercise[0]}
 							</div>
-						)
-					})}
-				</div>
+							{exercise.slice(1).map((data, index) => {
+								return (
+									<div key={index} className="border flex justify-center items-center">
+										{data}
+									</div>
+								)
+							})}
+						</div>
+					)
+				})}
 			</div>	
 		</div>
 	)

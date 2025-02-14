@@ -2,16 +2,7 @@
 
 import SessionTable from "@/components/custom/SessionTable";
 import {Button} from "@/components/ui/button";
-import {
-	Table,
-	TableBody,
-	TableCaption,
-	TableCell,
-	TableFooter,
-	TableHead,
-	TableHeader,
-	TableRow,
-  } from "@/components/ui/table"
+import {Calendar} from "@/components/ui/calendar";
 import {Exercise} from "@/utils/ExerciseTypes";
 import axios from "axios";
 import {ChevronLeft} from "lucide-react";
@@ -20,7 +11,17 @@ import {useEffect, useState} from "react";
 
 export default function PastSessions() {
 
-	const [sessions, setSessions] = useState<{_id: string, type: string, date: Date, exerciseList: Exercise}[]>([]);
+	const [sessions, setSessions] = useState<{_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}[]>([]);
+	
+	const [pushSessions, setPushSessions] = useState<{_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}[]>([]);
+	const [pullSessions, setPullSessions] = useState<{_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}[]>([]);
+	const [legSessions, setLegSessions] = useState<{_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}[]>([]);
+
+	const [pushSessionDates, setPushSessionDates] = useState<Date[]>([]);
+	const [pullSessionDates, setPullSessionDates] = useState<Date[]>([]);
+	const [legSessionDates, setLegSessionDates] = useState<Date[]>([]);
+	
+	const [date, setDate] = useState<Date | undefined>(new Date());
 
 	useEffect(() => {
 		const getSessions = async () => {
@@ -39,13 +40,64 @@ export default function PastSessions() {
 	}, []);
 
 	useEffect(() => {
-		sessions.map((session) => {
-			const exerciseListMap = new Map(Object.entries(session.exerciseList));
-			for (const value of exerciseListMap.values()) {
-				console.log(value.data)
-			}
-		})
+		setPushSessions(sessions.filter(session => session.type === "Push"));
+		setPullSessions(sessions.filter(session => session.type === "Pull"));
+		setLegSessions(sessions.filter(session => session.type === "Legs"));
 	}, [sessions]);
+
+	useEffect(() => {
+		const dates: Date[] = [];
+		pushSessions.map((session) => {
+			const date = new Date(session.date);
+			dates.push(date);
+		});
+		setPushSessionDates(dates);
+	}, [pushSessions]);
+
+	useEffect(() => {
+		const dates: Date[] = [];
+		pullSessions.map((session) => {
+			const date = new Date(session.date);
+			dates.push(date);
+		});
+		setPullSessionDates(dates);
+	}, [pullSessions]);
+
+	useEffect(() => {
+		const dates: Date[] = [];
+		legSessions.map((session) => {
+			const date = new Date(session.date);
+			dates.push(date);
+		});
+		setLegSessionDates(dates);
+	}, [legSessions]);
+
+	console.log(pullSessionDates)
+
+	// Define modifiers
+	const modifiers = {
+		pushDays: pushSessionDates,
+		pullDays: pullSessionDates,
+		legDays: legSessionDates
+	}
+
+	// Define custom styles for each day
+	const modifiersStyles = {
+		pushDays: {
+			borderRadius: "50%",
+			background: "radial-gradient(circle, #FF6500 50%, transparent 50%)",
+		},
+
+		pullDays: {
+			borderRadius: "50%",
+			background: "radial-gradient(circle, #03C988 50%, transparent 50%)",
+		},
+
+		legDays: {
+			borderRadius: "50%",
+			background: "radial-gradient(circle, #1C82AD 50%, transparent 50%)"
+		}
+	}
 
 	return (
 		<div className="w-screen flex justify-center">
@@ -62,6 +114,7 @@ export default function PastSessions() {
 					{sessions.map((session, index) => (
 						<SessionTable key={index} session={session} />	
 					))}
+					<Calendar mode="single" selected={date} onSelect={setDate} modifiers={modifiers} modifiersStyles={modifiersStyles} className="rounded-md border shadow" />
 				</div>	
 			</div>
 		</div>
