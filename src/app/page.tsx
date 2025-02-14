@@ -3,13 +3,8 @@ import Link from "next/link";
 
 export default function Home() {
 	return (
-		<main className="h-screen w-screen flex flex-col justify-center items-center">
-			<div className="relative w-full h-full max-w-screen-md flex flex-col justify-center items-center">
-				<Link href="/pastSessions" className="absolute right-0 top-5 sm:hidden">
-					<Button variant="ghost" className="underline">
-						Past Sessions
-					</Button>
-				</Link>
+		<main className="w-screen flex flex-col justify-center items-center">
+			<div className="w-full max-w-screen-md flex flex-col justify-center items-center mt-40">
 				<h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-40">
 					Gymtrack
 				</h1>
@@ -29,7 +24,7 @@ export default function Home() {
 							Legs
 						</Button>
 					</Link>
-					<Link href="/pastSessions" className="w-1/4 mt-12 hidden sm:flex">
+					<Link href="/pastSessions" className="sm:w-1/4 mt-12">
 						<Button variant="outline" className="px-4 py-6 bg-slate-950 w-full">
 							Past Sessions
 						</Button>

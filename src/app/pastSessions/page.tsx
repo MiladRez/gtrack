@@ -110,11 +110,8 @@ export default function PastSessions() {
 				<h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
 					Past Sessions
 				</h2>
-				<div className="w-full">
-					{sessions.map((session, index) => (
-						<SessionTable key={index} session={session} />	
-					))}
-					<Calendar mode="single" selected={date} onSelect={setDate} modifiers={modifiers} modifiersStyles={modifiersStyles} className="rounded-md border shadow" />
+				<div className="w-fit mt-20">
+					<Calendar mode="single" selected={date} onSelect={setDate} modifiers={modifiers} modifiersStyles={modifiersStyles} className="scale-150 rounded-md border shadow" />
 				</div>	
 			</div>
 		</div>
