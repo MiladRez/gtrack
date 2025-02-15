@@ -119,7 +119,7 @@ export default function Legs() {
 		<div className="w-screen flex justify-center">
 			<div className="max-w-screen-md w-full flex flex-col items-center gap-12 mx-4">
 				<Link href="/" className="self-start">
-					<Button variant="outline" size="icon" className="bg-slate-900 border-slate-700 sm:mt-20">
+					<Button variant="outline" size="icon" className="bg-slate-900 border-slate-700 mt-2 sm:mt-20">
 						<ChevronLeft />
 					</Button>
 				</Link>

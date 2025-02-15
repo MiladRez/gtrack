@@ -1,0 +1,38 @@
+/* have to change all the below to change selected day styling */
+td > button.bg-primary {
+	background-color: transparent;
+	color: white;
+}
+
+td > button.bg-primary:focus {
+	background-color: transparent;
+	color: white;
+}
+
+td > button.bg-primary:hover {
+	background-color: transparent;
+	color: white;
+}
+
+.hover\:bg-accent:hover {
+	background-color: transparent;
+}
+
+.hover\:text-accent-foreground:hover  {
+	color: white;
+}
+
+.\[\&\:has\(\[aria-selected\]\)\]\:bg-accent:has([aria-selected]) {
+	background-color: transparent;
+}
+/* have to change all of the above to change selected day styling */
+
+/* week row */
+tr.flex.w-full.mt-2 {
+	gap: 0.25rem;
+}
+
+/* Sun-Sat row */
+thead > tr {
+	gap: 0.25rem;
+}
