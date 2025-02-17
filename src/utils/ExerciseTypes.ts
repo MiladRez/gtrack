@@ -25,3 +25,10 @@ export type ExerciseItem = {
 	name: string,
 	type: "Dumbbell" | "Bar" | "Machine"
 }
+
+export type Session = {
+	_id: string,
+	type: string,
+	date: Date,
+	exerciseList: Map<string, Exercise>
+}

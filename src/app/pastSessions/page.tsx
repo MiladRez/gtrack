@@ -1,9 +1,8 @@
 'use client';
 
-import SessionTable from "@/components/custom/SessionTable";
 import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar";
-import {Exercise} from "@/utils/ExerciseTypes";
+import {Exercise, Session} from "@/utils/ExerciseTypes";
 import axios from "axios";
 import {ChevronLeft} from "lucide-react";
 import Link from "next/link";
@@ -12,17 +11,17 @@ import "../../styles/calendar.css"
 
 export default function PastSessions() {
 
-	const [sessions, setSessions] = useState<{_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}[]>([]);
+	const [sessions, setSessions] = useState<Session[]>([]);
 	
-	const [pushSessions, setPushSessions] = useState<{_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}[]>([]);
-	const [pullSessions, setPullSessions] = useState<{_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}[]>([]);
-	const [legSessions, setLegSessions] = useState<{_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}[]>([]);
+	const [pushSessions, setPushSessions] = useState<Session[]>([]);
+	const [pullSessions, setPullSessions] = useState<Session[]>([]);
+	const [legSessions, setLegSessions] = useState<Session[]>([]);
 
 	const [pushSessionDates, setPushSessionDates] = useState<Date[]>([]);
 	const [pullSessionDates, setPullSessionDates] = useState<Date[]>([]);
 	const [legSessionDates, setLegSessionDates] = useState<Date[]>([]);
 
-	const [selectedDaySession, setSelectedDaySession] = useState<{_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}>();
+	const [selectedDaySession, setSelectedDaySession] = useState<Session>();
 	
 	const [date, setDate] = useState<Date | undefined>(new Date());
 
@@ -138,17 +137,46 @@ export default function PastSessions() {
 		}
 	}
 
-	const SessionCardBackgroundColor = (type: string) => {
-		switch (type) {
-			case "Push":
-				return "bg-[#FF6500]"
-			case "Pull":
-				return "bg-[#03C988]"
-			case "Legs":
-				return "bg-[#1C82AD]"
-			default:
-				return ""
+	const SelectedSession = ({session}: {session: Session}) => {
+
+		const {_id, type, date, exerciseList} = session;
+
+		const dateString = `${date.toLocaleDateString("en-CA", {weekday: "short"})}, ${date.toLocaleDateString("en-CA", {month: "short"})} ${date.getDate()}, ${date.getFullYear()}`
+		const timeString = `${date.toLocaleTimeString("en-CA", {hour12: true, hour: "numeric", minute: "2-digit"})}`
+
+		const SessionCardBackgroundColor = () => {
+			switch (type) {
+				case "Push":
+					return "bg-[#FF6500]"
+				case "Pull":
+					return "bg-[#03C988]"
+				case "Legs":
+					return "bg-[#1C82AD]"
+				default:
+					return ""
+			}
 		}
+
+		return (
+			<Link href={`/pastSessions/${_id}`} >
+				<div className={`absolute w-full flex text-sm mt-4 sm:mt-16 rounded-md py-3 px-4 ${SessionCardBackgroundColor()}`}>
+					<div className="w-full flex flex-col">
+						<h2>{type}</h2>
+						<p className="text-[0.7rem] sm:text-xs italic text-gray-700">
+							{exerciseList.size} exercise(s)
+						</p>
+					</div>
+					<div className="flex flex-col items-end">
+						<p className="text-xs whitespace-nowrap">
+							{dateString}
+						</p>
+						<p className="text-[0.7rem] sm:text-xs uppercase">
+							{timeString}
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
 	}
 
 	return (
@@ -172,22 +200,7 @@ export default function PastSessions() {
 						className="rounded-md border border-slate-700 bg-slate-950"
 					/>	
 					{selectedDaySession ? 
-						<div className={`absolute w-full flex text-sm mt-4 sm:mt-16 rounded-md py-3 px-4 ${SessionCardBackgroundColor(selectedDaySession.type)}`}>
-							<div className="w-full flex flex-col">
-								<h2>{selectedDaySession.type}</h2>
-								<p className="text-[0.7rem] sm:text-xs italic text-gray-700">
-									{selectedDaySession.exerciseList.size} exercise(s)
-								</p>
-							</div>
-							<div className="flex flex-col items-end">
-								<p className="text-xs whitespace-nowrap">
-									{selectedDaySession.date.toLocaleDateString("en-CA", {weekday: "short"})}, {selectedDaySession.date.toLocaleDateString("en-CA", {month: "short"})} {selectedDaySession.date.getDate()}, {selectedDaySession.date.getFullYear()}
-								</p>
-								<p className="text-[0.7rem] sm:text-xs uppercase">
-									{selectedDaySession.date.toLocaleTimeString("en-CA", {hour12: true, hour: "numeric", minute: "2-digit"})}
-								</p>
-							</div>
-						</div>
+						<SelectedSession session={selectedDaySession} />
 						:
 						null
 					}

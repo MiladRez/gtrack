@@ -1,5 +1,4 @@
 import {Exercise, ExerciseData} from "@/utils/ExerciseTypes"
-import {JSX} from "react";
 
 export default function SessionTable({session}: {session: {_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}}) {
 
