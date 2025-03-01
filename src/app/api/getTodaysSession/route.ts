@@ -13,7 +13,7 @@ export async function GET(request: Request) {
 		)
 	}
 
-	const today = new Date();
+	// const today = new Date();
 
 	const dayStart = new Date();
 	dayStart.setHours(0, 0, 0, 0);
@@ -34,7 +34,7 @@ export async function GET(request: Request) {
 		return NextResponse.json(data, {status: 200});
 	} catch (e) {
 		return NextResponse.json(
-			{error: "Failed to fetch data from database"},
+			{error: "Failed to fetch data from database", e},
 			{status: 500}
 		);
 	}		

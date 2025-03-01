@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const useEffectSkipFirstRender = (func: Function, deps: Array<any>) => {
+const useEffectSkipFirstRender = (func: () => void, deps: React.DependencyList) => {
     const firstRender = useRef(true);
 
     useEffect(() => {

@@ -12,7 +12,7 @@ export async function GET() {
 		return NextResponse.json(data, {status: 200});
 	} catch (e) {
 		return NextResponse.json(
-			{error: "Failed to fetch data from database"},
+			{error: "Failed to fetch data from database", e},
 			{status: 500}
 		);
 	}		

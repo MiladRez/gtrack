@@ -1,13 +1,13 @@
-import {Exercise, ExerciseData} from "@/utils/ExerciseTypes"
+import {Exercise} from "@/utils/ExerciseTypes"
 
 export default function SessionTable({session}: {session: {_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}}) {
 
 	const exerciseList = new Map<string, Exercise>(Object.entries(session.exerciseList));
 	
-	let exercisesData = [];
+	const exercisesData = [];
 
 	for (const exercise of exerciseList.values()) {
-		let exerciseData = []
+		const exerciseData = []
 		exerciseData[0] = exercise.name;
 		exerciseData[1] = exercise.data.set1.weight;
 		exerciseData[2] = exercise.data.set1.reps;

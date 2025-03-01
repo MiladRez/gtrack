@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 		return NextResponse.json(result, {status: 200});
 	} catch (e) {
 		return NextResponse.json(
-			{error: "Failed to write to database"},
+			{error: "Failed to write to database", e},
 			{status: 500}
 		);
 	}

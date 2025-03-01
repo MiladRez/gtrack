@@ -4,8 +4,8 @@ import {useState} from "react";
 
 type ExerciseCardInputProps = {
 	displayValues: ExerciseData,
-	setDisplayValues: Function,
-	debouncedUpdate: Function,
+	setDisplayValues: React.Dispatch<React.SetStateAction<ExerciseData>>,
+	debouncedUpdate: (updatedValues: ExerciseData) => void,
 	setString: "set1" | "set2" | "set3",
 	entryType: "weight" | "reps"
 }
