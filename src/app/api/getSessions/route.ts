@@ -1,5 +1,5 @@
 import clientPromise from "@/libs/mongodb";
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
 
 export async function GET() {
 	try {
@@ -8,6 +8,8 @@ export async function GET() {
 		const collection = db.collection("sessions")
 
 		const data = await collection.find({}).toArray();
+
+		console.log(data)
 
 		return NextResponse.json(data, {status: 200});
 	} catch (e) {

@@ -102,7 +102,10 @@ export default function PastSessions() {
 		}
 	}, [date, sessions]);
 
-	// Define modifiers
+	// Define modifiers: changes the colour of the calendar days to the respective exercise day
+	// Push: Orange
+	// Pull: Green
+	// Legs: Blue
 	const modifiers = {
 		pushDays: pushSessionDates,
 		pullDays: pullSessionDates,
@@ -126,15 +129,16 @@ export default function PastSessions() {
 			background: "radial-gradient(circle, #1C82AD 50%, transparent 50%)"
 		},
 
-		selected: {
-			border: "1px solid white",
-			transition: "none"
-		},
+		// selected: {
+		// 	border: "1px solid white",
+		// 	// bg: "none",
+		// 	transition: "none"
+		// },
 
-		today: {
-			backgroundColor: "#ffffff",
-			color: "#000000"
-		}
+		// today: {
+		// 	backgroundColor: "#ffffff",
+		// 	color: "#000000"
+		// }
 	}
 
 	const SelectedSession = ({session}: {session: Session}) => {
@@ -198,6 +202,9 @@ export default function PastSessions() {
 						modifiers={modifiers}
 						modifiersStyles={modifiersStyles}
 						className="rounded-md border border-slate-700 bg-slate-950"
+						classNames={{
+							selected: "!border-0 outline outline-1 outline-white"
+						}}
 					/>	
 					{selectedDaySession ? 
 						<SelectedSession session={selectedDaySession} />
