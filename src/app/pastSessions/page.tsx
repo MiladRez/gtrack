@@ -143,9 +143,9 @@ export default function PastSessions() {
 	}
 
 	const modifiersClassNames: ModifiersClassNames = {
-		pushDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,_#FF6500_50%,_transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,_#FF6500_70%,_transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
-		pullDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,_#03C988_50%,_transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,_#03C988_70%,_transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
-		legDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,_#1C82AD_50%,_transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,_#1C82AD_70%,_transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		pushDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#FF6500_50%,transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,#FF6500_70%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		pullDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#03C988_50%,transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,#03C988_70%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		legDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#1C82AD_50%,transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,#1C82AD_70%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
 	}
 
 	const SelectedSession = ({session}: {session: Session}) => {
@@ -192,7 +192,7 @@ export default function PastSessions() {
 
 	return (
 		<div className="w-screen flex justify-center">
-			<div className="max-w-screen-md w-full flex flex-col items-center gap-12 mx-4">
+			<div className="max-w-(--breakpoint-md) w-full flex flex-col items-center gap-12 mx-4">
 				<Link href="/" className="self-start">
 					<Button variant="outline" size="icon" className="bg-slate-900 border-slate-700 mt-2 sm:mt-20">
 						<ChevronLeft />
