@@ -8,6 +8,7 @@ import {ChevronLeft} from "lucide-react";
 import Link from "next/link";
 import {useEffect, useState} from "react";
 import "../../styles/calendar.css"
+import {ModifiersClassNames} from "react-day-picker";
 
 export default function PastSessions() {
 
@@ -116,17 +117,17 @@ export default function PastSessions() {
 	const modifiersStyles = {
 		pushDays: {
 			borderRadius: "50%",
-			background: "radial-gradient(circle, #FF6500 50%, transparent 50%)",
+			background: "radial-gradient(circle, #FF6500 50%, transparent 100%)",
 		},
 
 		pullDays: {
 			borderRadius: "50%",
-			background: "radial-gradient(circle, #03C988 50%, transparent 50%)",
+			background: "radial-gradient(circle, #03C988 50%, transparent 100%)",
 		},
 
 		legDays: {
 			borderRadius: "50%",
-			background: "radial-gradient(circle, #1C82AD 50%, transparent 50%)"
+			background: "radial-gradient(circle, #1C82AD 50%, transparent 100%)",
 		},
 
 		// selected: {
@@ -139,6 +140,12 @@ export default function PastSessions() {
 		// 	backgroundColor: "#ffffff",
 		// 	color: "#000000"
 		// }
+	}
+
+	const modifiersClassNames: ModifiersClassNames = {
+		pushDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,_#FF6500_50%,_transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,_#FF6500_70%,_transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		pullDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,_#03C988_50%,_transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,_#03C988_70%,_transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		legDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,_#1C82AD_50%,_transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,_#1C82AD_70%,_transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
 	}
 
 	const SelectedSession = ({session}: {session: Session}) => {
@@ -200,10 +207,11 @@ export default function PastSessions() {
 						selected={date}
 						onSelect={setDate}
 						modifiers={modifiers}
-						modifiersStyles={modifiersStyles}
+						// modifiersStyles={modifiersStyles}
+						modifiersClassNames={modifiersClassNames}
 						className="rounded-md border border-slate-700 bg-slate-950"
 						classNames={{
-							selected: "!border-0 outline outline-1 outline-white"
+							selected: ""
 						}}
 					/>	
 					{selectedDaySession ? 
