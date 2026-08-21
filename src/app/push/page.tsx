@@ -114,7 +114,7 @@ export default function Push() {
 		const newMap = new Map(exerciseList);
 		newMap.delete(exerciseID.toString());
 		setExerciseList(newMap);
-		saveToDB(newMap); // save to DB
+		// saveToDB(newMap); // save to DB
 	};
 
 	const saveToDB = async (exerciseList: Map<Exercise["id"], Exercise>) => {
