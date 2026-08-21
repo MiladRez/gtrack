@@ -143,9 +143,9 @@ export default function PastSessions() {
 	}
 
 	const modifiersClassNames: ModifiersClassNames = {
-		pushDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#FF6500_50%,transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,#FF6500_70%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
-		pullDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#03C988_50%,transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,#03C988_70%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
-		legDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#1C82AD_50%,transparent_100%)] [&>button:hover]:bg-[radial-gradient(circle,#1C82AD_70%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		pushDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#FF6500_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		pullDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#03C988_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		legDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#1C82AD_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
 	}
 
 	const SelectedSession = ({session}: {session: Session}) => {

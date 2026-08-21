@@ -1,23 +1,19 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from "react";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
+import {useEffect, useState} from "react";
 import ExerciseCard from "@/components/custom/ExerciseCard";
 import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
 import {Exercise, ExerciseData, ExerciseItem} from "@/utils/ExerciseTypes";
-import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIconDropdownMenu";
 import axios from "axios";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {ChevronLeft} from "lucide-react";
+import ExerciseDialog from "@/components/custom/ExerciseDialog";
+import {Dialog, DialogTrigger} from "@/components/ui/dialog";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIconDropdownMenu";
 
 export default function Push() {
-
 	const exercises: ExerciseItem[] = [
 		{
 			id: "1",
@@ -73,18 +69,21 @@ export default function Push() {
 			id: "11",
 			name: "Dips",
 			type: "Machine"
-		},
-	]
+		}
+	];
 
 	const [exerciseList, setExerciseList] = useState(new Map());
+	const [displayExerciseList, setDisplayExerciseList] = useState(new Map());
+	// const [dialogWindow, setDialogWindow] = useState(false);
+	const [exercise, setExercise] = useState<Exercise | null>(null);
 
 	const handleAddExercise = (exerciseItem: ExerciseItem) => {
 		// check if exercise already in exerciseList list
 		if (exerciseList.get(exerciseItem.id)) {
-			console.log("Exercise already added.")
+			console.log("Exercise already added.");
 		} else {
 			// adds selected exercise from dropdown list to exerciseList list
-			setExerciseList((prevState) => {
+			setExerciseList(prevState => {
 				const newMap = new Map(prevState);
 				const exercise: Exercise = {
 					...exerciseItem,
@@ -94,11 +93,12 @@ export default function Push() {
 						set3: {weight: 0, reps: 0}
 					}
 				};
-				newMap.set(exercise.id, exercise)
+				newMap.set(exercise.id, exercise);
+				setExercise(exercise);
 				return newMap;
 			});
 		}
-	}
+	};
 
 	const updateExerciseList = (exerciseID: string, data: ExerciseData) => {
 		const newMap = new Map(exerciseList);
@@ -106,39 +106,46 @@ export default function Push() {
 		exercise.data = data;
 		newMap.set(exerciseID, exercise);
 		setExerciseList(newMap);
-		handleSaveSession(newMap); // save to DB
-	}
+		setDisplayExerciseList(newMap);
+		saveToDB(newMap); // save to DB
+	};
 
 	const removeExercise = (exerciseID: string) => {
 		const newMap = new Map(exerciseList);
 		newMap.delete(exerciseID.toString());
 		setExerciseList(newMap);
-		handleSaveSession(newMap); // save to DB
-	}
+		saveToDB(newMap); // save to DB
+	};
 
-	const handleSaveSession = async (exerciseList: Map<Exercise["id"], Exercise >) => {
-		console.log(exerciseList)
-		await axios.post("/api/addSession", {
-			type: "Push",
-			exerciseList: Object.fromEntries(exerciseList)
-		}, {
-			headers: {
-				"Content-Type": "application/json"
+	const saveToDB = async (exerciseList: Map<Exercise["id"], Exercise>) => {
+		console.log(exerciseList);
+		await axios.post(
+			"/api/addSession",
+			{
+				type: "Push",
+				exerciseList: Object.fromEntries(exerciseList)
+			},
+			{
+				headers: {
+					"Content-Type": "application/json"
+				}
 			}
-		});
-	}
+		);
+	};
 
 	useEffect(() => {
 		const getTodaysSession = async () => {
 			try {
 				const response = await axios.get("/api/getTodaysSession", {
-					params: { type: "Push" }
+					params: {type: "Push"}
 				});
 
 				const data = await response.data;
 				if (data) {
 					const dataMap = new Map(Object.entries(data.exerciseList)); // API response returns object, convert object to Map
 					setExerciseList(new Map(dataMap));
+					setDisplayExerciseList(new Map(dataMap));
+					console.log("dataMap: ", dataMap);
 				}
 			} catch (error) {
 				console.error("Error fetching today's session: ", error);
@@ -147,9 +154,9 @@ export default function Push() {
 		getTodaysSession();
 	}, []);
 
-	useEffectSkipFirstRender(() => {
-		console.log(exerciseList)
-	}, [exerciseList]);
+	// useEffectSkipFirstRender(() => {
+	// 	console.log(exerciseList);
+	// }, [exerciseList]);
 
 	return (
 		<div className="w-screen flex justify-center">
@@ -164,31 +171,37 @@ export default function Push() {
 						Past Sessions
 					</Button>
 				</Link>
-				<h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-					Push
-				</h2>
-				<DropdownMenu>
-					<DropdownMenuTrigger className="px-6 py-4 bg-slate-900 border border-slate-700 rounded-lg sm:mt-20">
-						Add Exercise
-					</DropdownMenuTrigger>
-					<DropdownMenuContent>
-						{exercises.filter(excer => !exerciseList.get(excer.id))
-						.map((exercise) => (
-							<DropdownMenuItem
-								className="flex justify-between gap-12"
-								key={exercise.id}
-								onClick={() => handleAddExercise(exercise)}
-							>
-								{exercise.name}
-								<ExerciseIconDropdownMenu type={exercise.type} />
-							</DropdownMenuItem>
-						))}
-					</DropdownMenuContent>
-				</DropdownMenu>
-				{Array.from(exerciseList).map((exercise) => (
-					<ExerciseCard key={exercise[0]} exercise={exercise[1]} updateExerciseList={updateExerciseList} removeExercise={removeExercise} />
+				<h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">Push</h2>
+				<Dialog>
+					<DropdownMenu>
+						<DropdownMenuTrigger className="px-6 py-4 bg-slate-900 border border-slate-700 rounded-lg sm:mt-20">Add Exercise</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							{exercises
+								.filter(excer => !exerciseList.get(excer.id))
+								.map(exercise => (
+									<DialogTrigger key={exercise.id} className="w-full flex">
+										<DropdownMenuItem
+											className="w-full flex justify-between"
+											// onClick={() => handleAddExercise(exercise)}
+											onClick={() => handleAddExercise(exercise)}
+										>
+											{exercise.name}
+											<ExerciseIconDropdownMenu type={exercise.type} />
+										</DropdownMenuItem>
+									</DialogTrigger>
+								))}
+						</DropdownMenuContent>
+					</DropdownMenu>
+					{
+						exercise ?
+							<ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} saveToDB={saveToDB} />
+						: null
+					}
+				</Dialog>
+				{Array.from(displayExerciseList).map(exercise => (
+					<ExerciseCard key={exercise[0]} exercise={exercise[1]} updateExerciseList={updateExerciseList} />
 				))}
 			</div>
 		</div>
-	)
+	);
 }

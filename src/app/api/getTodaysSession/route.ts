@@ -14,12 +14,15 @@ export async function GET(request: Request) {
 	}
 
 	// const today = new Date();
+	// today.setHours(today.getHours() - 4); // EST timezone
+
+	const timezoneDiff = 4
 
 	const dayStart = new Date();
-	dayStart.setHours(0, 0, 0, 0);
+	dayStart.setHours(0 - timezoneDiff, 0, 0, 0);
 
 	const dayEnd = new Date();
-	dayEnd.setHours(23, 59, 59, 999);
+	dayEnd.setHours(23 - timezoneDiff, 59, 59, 999);
 
 	try {
 		const client = await clientPromise;

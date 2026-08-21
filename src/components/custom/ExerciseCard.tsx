@@ -1,100 +1,28 @@
-import {useCallback, useState} from "react";
-import ExerciseCardInput from "./ExerciseCardInput";
-import debounce from "lodash.debounce";
-import {Separator} from "../ui/separator";
 import {Exercise, ExerciseData} from "@/utils/ExerciseTypes";
 
 type ExerciseCardProps = {
-	exercise: Exercise,
-	updateExerciseList: (exerciseID: string, data: ExerciseData) => void,
-	removeExercise: (exerciseID: string) => void
-}
+	exercise: Exercise;
+	updateExerciseList: (exerciseID: string, data: ExerciseData) => void;
+};
 
-export default function ExerciseCard({exercise, updateExerciseList, removeExercise}: ExerciseCardProps) {
-	
-	const {id, name, type, data}: Exercise = exercise;
-
-	const [displayValues, setDisplayValues] = useState(data);
-
-	// delays function call to post to db by 500ms, using useCallback to prevent page rerendering
-	const debouncedUpdate = useCallback(
-		debounce((updatedValues: ExerciseData) => {
-			updateExerciseList(id, updatedValues);
-		}, 500),
-		[]
-	);
-
-	const handleRemoveExercise = () => {
-		removeExercise(id);
-	}
-
-	const ExerciseIcon = ({ type }: { type: "Dumbbell" | "Bar" | "Machine" }) => {
-		switch (type) {
-			case "Dumbbell":
-				return (
-					<svg fill="white" className="w-5 h-5">
-						<use href="/icons.svg#dumbbell" />
-					</svg>
-				)
-			case "Bar":
-				return (
-					<svg fill="white" className="w-6 h-6">
-						<use href="/icons.svg#barbell" />
-					</svg>
-				)
-			case "Machine":
-				return (
-					<svg stroke="white" fill="white" className="w-6 h-6">
-						<use href="/icons.svg#machine" />
-					</svg>
-				)
-			default:
-				return (
-					<svg fill="white" className="w-6 h-6">
-						<use href="/icons.svg#spinner" />
-					</svg>
-				)
-		}
-	}
-
+export default function ExerciseCard({exercise, updateExerciseList}: ExerciseCardProps) {
 	return (
-		<div className="grid w-full max-w-xl border border-slate-600 rounded-3xl bg-slate-950">
-			<div className="relative col-span-2 flex justify-center py-8">
-				<div className="px-2 text-white flex">
-					<div className="flex flex-col items-center gap-3">
-						<ExerciseIcon type={type} />
-						{name}
-					</div>
-					<svg stroke="white" className="absolute right-0 mx-6 w-5 h-5" onClick={handleRemoveExercise}>
-						<use href="/icons.svg#cross" />
-					</svg>
+		<div>
+			<div>{exercise.name}</div>
+			<div>
+				<div>
+					Set 1: <span>{exercise.data.set1.weight} lbs for </span>
+					<span>{exercise.data.set1.reps} reps</span>
 				</div>
-			</div>
-			<div className="grid col-span-2 mx-6 pb-6">
-				<div className="grid grid-cols-3">
-					<h2 className="px-2 text-lg self-center uppercase">Set 1</h2>
-					<div className="flex gap-4 md:gap-6 justify-end col-span-2 px-2">
-						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set1" entryType="weight" />
-						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set1" entryType="reps" />
-					</div>
+				<div>
+					Set 2: <span>{exercise.data.set2.weight} lbs for </span>
+					<span>{exercise.data.set2.reps} reps</span>
 				</div>
-				<Separator className="bg-slate-600 my-6" />
-				<div className="grid grid-cols-3">
-					<h2 className="px-2 text-lg self-center uppercase">Set 2</h2>
-					<div className="flex gap-4 md:gap-6 justify-end col-span-2 px-2">
-						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set2" entryType="weight" />
-						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set2" entryType="reps" />
-					</div>
-				</div>
-				<Separator className="bg-slate-600 my-6" />
-				<div className="grid grid-cols-3">
-					<h2 className="px-2 text-lg self-center uppercase">Set 3</h2>
-					<div className="flex gap-4 md:gap-6 justify-end col-span-2 px-2">
-						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set3" entryType="weight" />
-						<ExerciseCardInput displayValues={displayValues} setDisplayValues={setDisplayValues} debouncedUpdate={debouncedUpdate} setString="set3" entryType="reps" />
-					</div>
+				<div>
+					Set 3: <span>{exercise.data.set3.weight} lbs for </span>
+					<span>{exercise.data.set3.reps} reps</span>
 				</div>
 			</div>
 		</div>
-	)
+	);
 }

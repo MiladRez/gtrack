@@ -3,16 +3,18 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
 
+	const timezoneDiff = 4
+
 	const today = new Date();
-	today.setHours(today.getHours() - 5); // EST timezone
+	today.setHours(today.getHours() - timezoneDiff); // EST timezone
 	// const tomorrow = new Date();
 	// tomorrow.setDate(10);
 
 	const dayStart = new Date();
-	dayStart.setHours(0, 0, 0, 0);
+	dayStart.setHours(0 - timezoneDiff, 0, 0, 0);
 
 	const dayEnd = new Date();
-	dayEnd.setHours(23, 59, 59, 999);
+	dayEnd.setHours(23 - timezoneDiff, 59, 59, 999);
 
 	try {
 		const client = await clientPromise;
