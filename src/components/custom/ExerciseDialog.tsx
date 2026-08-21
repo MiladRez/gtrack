@@ -9,43 +9,41 @@ import {useState} from "react";
 import {OutletBoundary} from "next/dist/lib/framework/boundary-components";
 
 type ExerciseDialogProps = {
-	exercise: Exercise,
-	exerciseList: Map<string, Exercise>,
-	updateExerciseList: (exerciseID: string, data: ExerciseData) => void,
-	removeExercise: (exerciseID: string) => void,
-	saveToDB: (exerciseList: Map<Exercise["id"], Exercise >) => void
-}
+	exercise: Exercise;
+	exerciseList: Map<string, Exercise>;
+	updateExerciseList: (exerciseID: string, data: ExerciseData) => void;
+	removeExercise: (exerciseID: string) => void;
+};
 
-export default function ExerciseDialog({exercise, exerciseList, updateExerciseList, removeExercise, saveToDB}: ExerciseDialogProps) {
-
-	const ExerciseIcon = ({type}: {type: "Dumbbell" | "Bar" | "Machine" }) => {
+export default function ExerciseDialog({exercise, exerciseList, updateExerciseList, removeExercise}: ExerciseDialogProps) {
+	const ExerciseIcon = ({type}: {type: "Dumbbell" | "Bar" | "Machine"}) => {
 		switch (type) {
 			case "Dumbbell":
 				return (
 					<svg fill="white" className="w-5 h-5">
 						<use href="/icons.svg#dumbbell" />
 					</svg>
-				)
+				);
 			case "Bar":
 				return (
 					<svg fill="white" className="w-6 h-6">
 						<use href="/icons.svg#barbell" />
 					</svg>
-				)
+				);
 			case "Machine":
 				return (
 					<svg stroke="white" fill="white" className="w-6 h-6">
 						<use href="/icons.svg#machine" />
 					</svg>
-				)
+				);
 			default:
 				return (
 					<svg fill="white" className="w-6 h-6">
 						<use href="/icons.svg#spinner" />
 					</svg>
-				)
+				);
 		}
-	}
+	};
 
 	const [exerciseData, setExerciseData] = useState<ExerciseData>({
 		set1: {weight: 0, reps: 0},
@@ -54,7 +52,6 @@ export default function ExerciseDialog({exercise, exerciseList, updateExerciseLi
 	});
 
 	const excerciseItemToExercise = (exerciseItem: ExerciseItem) => {
-		
 		const newExercise: Exercise = {
 			...exerciseItem,
 			data: {
@@ -62,19 +59,20 @@ export default function ExerciseDialog({exercise, exerciseList, updateExerciseLi
 				set2: {weight: 0, reps: 0},
 				set3: {weight: 0, reps: 0}
 			}
-		}
+		};
 		return newExercise;
-	}
+	};
 
 	const handleUpdateExerciseData = (exerciseData: ExerciseData) => {
 		setExerciseData(exerciseData);
-	}
+	};
 
 	const handleDialogSaveData = () => {
-		console.log("saving clicked")
+		console.log("saving clicked");
+		console.log(exerciseData)
 		updateExerciseList(exercise.id, exerciseData);
 		// saveToDB(exerciseList);
-	}
+	};
 
 	const handleAddExerciseToExerciseList = (exerciseItem: ExerciseItem) => {
 		// check if exercise already in exerciseList list
@@ -97,12 +95,11 @@ export default function ExerciseDialog({exercise, exerciseList, updateExerciseLi
 		// 		return newMap;
 		// 	});
 		// }
-
 		// setExercise(exerciseItem);
-	}
+	};
 
 	return (
-		<DialogContent className="sm:max-w-sm border border-slate-600 rounded-3xl bg-slate-950" onInteractOutside={() => removeExercise(exercise.id)}>
+		<DialogContent className="sm:max-w-sm border border-app-primary-border rounded-3xl bg-app-primary" onInteractOutside={() => removeExercise(exercise.id)} onOpenAutoFocus={event => event.preventDefault()}>
 			<DialogHeader>
 				<DialogTitle>
 					<div className="flex flex-col items-center gap-3 mb-4">
@@ -116,12 +113,16 @@ export default function ExerciseDialog({exercise, exerciseList, updateExerciseLi
 			</FieldGroup>
 			<DialogFooter>
 				<DialogClose asChild>
-					<Button variant="destructive" onClick={() => removeExercise(exercise.id)}>Cancel</Button>
+					<Button variant="destructive" className="py-6 md:py-0 border border-app-primary-border" onClick={() => removeExercise(exercise.id)}>
+						Cancel
+					</Button>
 				</DialogClose>
 				<DialogClose asChild>
-					<Button onClick={() => handleDialogSaveData()}>Save</Button>
+					<Button className="py-6 md:py-0 border border-app-primary-border bg-app-primary" onClick={() => handleDialogSaveData()}>
+						Save
+					</Button>
 				</DialogClose>
 			</DialogFooter>
 		</DialogContent>
-	)
- }
+	);
+}

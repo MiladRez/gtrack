@@ -13,6 +13,7 @@ type ExerciseCardInputProps = {
 export default function ExerciseCardInput({displayValues, setDisplayValues, debouncedUpdate, setString, entryType}: ExerciseCardInputProps) {
 
 	const [finalValue, setFinalValue] = useState(displayValues);
+	const [placeholderValue, setPlaceholderValue] = useState(displayValues[setString][entryType].toString());
 
 	const handleInputOnFocus = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
 		if (e.target.value === "0") {
@@ -24,6 +25,13 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, debo
 					entryType === "weight" ? { weight: "", reps: set.reps } : { weight: set.weight, reps: "" }
 			}));
 		}
+		// const setString = e.target.name;
+
+		// setDisplayValues((prevState: ExerciseData) => ({
+		// 	...prevState,
+		// 	[setString as keyof ExerciseData]:
+		// 		entryType === "weight" ? { weight: "", reps: set.reps } : { weight: set.weight, reps: "" }
+		// }));
 	}
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
@@ -36,6 +44,7 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, debo
 				entryType === "weight" ? {weight: inputValue, reps: set.reps} : {weight: set.weight, reps: inputValue}
 		}));
 		setFinalValue(displayValues);
+		setPlaceholderValue(displayValues[setString as keyof ExerciseData][entryType].toString());
 	}
 
 	const handleInputOnBlur = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
@@ -56,8 +65,8 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, debo
 	return (
 		<div className="flex flex-col">
 			<input
-				className="max-w-14 text-center text-lg text-white border border-slate-800 rounded bg-slate-950 py-1"
-				placeholder="0"
+				className="max-w-14 text-center text-lg text-white border border-slate-800 rounded bg-gray-600 py-1"
+				placeholder={placeholderValue}
 				value={displayValues[setString][entryType]}
 				onFocus={(e) => handleInputOnFocus(e, displayValues[setString], entryType)}
 				onChange={(e) => handleInputChange(e, displayValues[setString], entryType)}
@@ -67,7 +76,7 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, debo
 				pattern="[0-9]*"
 				inputMode="numeric"
 			/>
-			<label className="self-center uppercase">{entryType === "weight" ? "lbs" : "reps"}</label>
+			<label className="self-center uppercase text-xs">{entryType === "weight" ? "lbs" : "reps"}</label>
 		</div>
 	)
 }

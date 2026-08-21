@@ -98,11 +98,13 @@ export default function Push() {
 				return newMap;
 			});
 		}
+		console.log("exerciseList: ", exerciseList)
 	};
 
 	const updateExerciseList = (exerciseID: string, data: ExerciseData) => {
 		const newMap = new Map(exerciseList);
-		const exercise = newMap.get(exerciseID);
+		const exercise: Exercise = newMap.get(exerciseID);
+		console.log("exerciseList from update: ", exerciseList)
 		exercise.data = data;
 		newMap.set(exerciseID, exercise);
 		setExerciseList(newMap);
@@ -114,8 +116,10 @@ export default function Push() {
 		const newMap = new Map(exerciseList);
 		newMap.delete(exerciseID.toString());
 		setExerciseList(newMap);
-		saveToDB(newMap); // save to DB
+		// saveToDB(newMap); // save to DB
 	};
+
+	//TODO: handle removal of exercises, need to figure out how we want to implement the removal of the backend exerciseList and the one actually displayed
 
 	const saveToDB = async (exerciseList: Map<Exercise["id"], Exercise>) => {
 		console.log(exerciseList);
@@ -192,14 +196,15 @@ export default function Push() {
 								))}
 						</DropdownMenuContent>
 					</DropdownMenu>
-					{
-						exercise ?
-							<ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} saveToDB={saveToDB} />
-						: null
-					}
+					{exercise ? <ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} /> : null}
 				</Dialog>
 				{Array.from(displayExerciseList).map(exercise => (
-					<ExerciseCard key={exercise[0]} exercise={exercise[1]} updateExerciseList={updateExerciseList} />
+					<Dialog key={exercise[0]}>
+						<DialogTrigger>
+							<ExerciseCard exercise={exercise[1]} updateExerciseList={updateExerciseList} />
+						</DialogTrigger>
+						<ExerciseDialog exercise={exercise[1]} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} />
+					</Dialog>
 				))}
 			</div>
 		</div>
