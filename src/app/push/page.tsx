@@ -194,7 +194,7 @@ export default function Push() {
 					</DropdownMenu>
 					{
 						exercise ?
-							<ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} saveToDB={saveToDB} />
+							<ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} />
 						: null
 					}
 				</Dialog>

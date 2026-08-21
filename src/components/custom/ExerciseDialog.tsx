@@ -12,11 +12,10 @@ type ExerciseDialogProps = {
 	exercise: Exercise,
 	exerciseList: Map<string, Exercise>,
 	updateExerciseList: (exerciseID: string, data: ExerciseData) => void,
-	removeExercise: (exerciseID: string) => void,
-	saveToDB: (exerciseList: Map<Exercise["id"], Exercise >) => void
+	removeExercise: (exerciseID: string) => void
 }
 
-export default function ExerciseDialog({exercise, exerciseList, updateExerciseList, removeExercise, saveToDB}: ExerciseDialogProps) {
+export default function ExerciseDialog({exercise, exerciseList, updateExerciseList, removeExercise}: ExerciseDialogProps) {
 
 	const ExerciseIcon = ({type}: {type: "Dumbbell" | "Bar" | "Machine" }) => {
 		switch (type) {
@@ -102,7 +101,7 @@ export default function ExerciseDialog({exercise, exerciseList, updateExerciseLi
 	}
 
 	return (
-		<DialogContent className="sm:max-w-sm border border-slate-600 rounded-3xl bg-slate-950" onInteractOutside={() => removeExercise(exercise.id)}>
+		<DialogContent className="sm:max-w-sm border border-app-primary-border rounded-3xl bg-app-primary" onInteractOutside={() => removeExercise(exercise.id)}>
 			<DialogHeader>
 				<DialogTitle>
 					<div className="flex flex-col items-center gap-3 mb-4">
@@ -116,10 +115,10 @@ export default function ExerciseDialog({exercise, exerciseList, updateExerciseLi
 			</FieldGroup>
 			<DialogFooter>
 				<DialogClose asChild>
-					<Button variant="destructive" onClick={() => removeExercise(exercise.id)}>Cancel</Button>
+					<Button variant="destructive" className="py-6 md:py-0 border border-app-primary-border" onClick={() => removeExercise(exercise.id)}>Cancel</Button>
 				</DialogClose>
 				<DialogClose asChild>
-					<Button onClick={() => handleDialogSaveData()}>Save</Button>
+					<Button className="py-6 md:py-0 border border-app-primary-border bg-app-primary" onClick={() => handleDialogSaveData()}>Save</Button>
 				</DialogClose>
 			</DialogFooter>
 		</DialogContent>
