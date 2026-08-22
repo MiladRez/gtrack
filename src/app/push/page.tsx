@@ -74,7 +74,6 @@ export default function Push() {
 
 	const [exerciseList, setExerciseList] = useState(new Map());
 	const [displayExerciseList, setDisplayExerciseList] = useState(new Map());
-	// const [dialogWindow, setDialogWindow] = useState(false);
 	const [exercise, setExercise] = useState<Exercise | null>(null);
 
 	const handleAddExercise = (exerciseItem: ExerciseItem) => {
@@ -111,6 +110,7 @@ export default function Push() {
 	};
 
 	const removeExercise = (exerciseID: string) => {
+		console.log("I run!")
 		const newMap = new Map(exerciseList);
 		newMap.delete(exerciseID.toString());
 		setExerciseList(newMap);
@@ -145,7 +145,6 @@ export default function Push() {
 					const dataMap = new Map(Object.entries(data.exerciseList)); // API response returns object, convert object to Map
 					setExerciseList(new Map(dataMap));
 					setDisplayExerciseList(new Map(dataMap));
-					console.log("dataMap: ", dataMap);
 				}
 			} catch (error) {
 				console.error("Error fetching today's session: ", error);
@@ -182,7 +181,6 @@ export default function Push() {
 									<DialogTrigger key={exercise.id} className="w-full flex">
 										<DropdownMenuItem
 											className="w-full flex justify-between"
-											// onClick={() => handleAddExercise(exercise)}
 											onClick={() => handleAddExercise(exercise)}
 										>
 											{exercise.name}
@@ -192,15 +190,18 @@ export default function Push() {
 								))}
 						</DropdownMenuContent>
 					</DropdownMenu>
-					{
-						exercise ?
-							<ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} />
-						: null
-					}
+					{exercise ? <ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} /> : null}
 				</Dialog>
-				{Array.from(displayExerciseList).map(exercise => (
-					<ExerciseCard key={exercise[0]} exercise={exercise[1]} updateExerciseList={updateExerciseList} />
-				))}
+				<div className="w-full flex flex-col gap-10 mb-10">
+					{Array.from(displayExerciseList).map(exercise => (
+						<Dialog key={exercise[0]}>
+							<DialogTrigger className="w-full px-4 md:w-1/2">
+								<ExerciseCard exercise={exercise[1]} />
+							</DialogTrigger>
+							<ExerciseDialog exercise={exercise[1]} exerciseList={exerciseList} updateExerciseList={updateExerciseList} />
+						</Dialog>
+					))}
+				</div>
 			</div>
 		</div>
 	);

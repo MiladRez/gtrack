@@ -5,26 +5,19 @@ import {useState} from "react";
 type ExerciseCardInputProps = {
 	displayValues: ExerciseData,
 	setDisplayValues: React.Dispatch<React.SetStateAction<ExerciseData>>,
-	debouncedUpdate: (updatedValues: ExerciseData) => void,
+	handleUpdateExerciseData: (updatedValues: ExerciseData) => void,
 	setString: "set1" | "set2" | "set3",
 	entryType: "weight" | "reps"
 }
 
-export default function ExerciseCardInput({displayValues, setDisplayValues, debouncedUpdate, setString, entryType}: ExerciseCardInputProps) {
+export default function ExerciseCardInput({displayValues, setDisplayValues, handleUpdateExerciseData, setString, entryType}: ExerciseCardInputProps) {
 
 	const [finalValue, setFinalValue] = useState(displayValues);
 
-	const handleInputOnFocus = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
-		if (e.target.value === "0") {
-			const setString = e.target.name;
-
-			setDisplayValues((prevState: ExerciseData) => ({
-				...prevState,
-				[setString as keyof ExerciseData]:
-					entryType === "weight" ? { weight: "", reps: set.reps } : { weight: set.weight, reps: "" }
-			}));
-		}
-	}
+	const handleInputOnFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+		const input = e.currentTarget;
+		requestAnimationFrame(() => input.setSelectionRange(0, input.value.length));
+	};
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
 		const inputValue = e.target.value === "" ? "" : Number(e.target.value);
@@ -50,24 +43,24 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, debo
 	}
 
 	useEffectSkipFirstRender(() => {
-		debouncedUpdate(displayValues);
+		handleUpdateExerciseData(displayValues);
 	}, [finalValue]);
 
 	return (
-		<div className="flex flex-col">
+		<div className="flex flex-col gap-1">
 			<input
 				className="max-w-14 text-center text-lg text-white border border-slate-800 rounded bg-slate-950 py-1"
 				placeholder="0"
 				value={displayValues[setString][entryType]}
-				onFocus={(e) => handleInputOnFocus(e, displayValues[setString], entryType)}
+				onFocus={handleInputOnFocus}
 				onChange={(e) => handleInputChange(e, displayValues[setString], entryType)}
 				onBlur={(e) => handleInputOnBlur(e, displayValues[setString], entryType)}
 				name={setString}
-				type="number"
+				type="text"
 				pattern="[0-9]*"
 				inputMode="numeric"
 			/>
-			<label className="self-center uppercase">{entryType === "weight" ? "lbs" : "reps"}</label>
+			<label className="self-center uppercase text-xs">{entryType === "weight" ? "lbs" : "reps"}</label>
 		</div>
 	)
 }

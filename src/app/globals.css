@@ -43,11 +43,20 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  --color-app-primary: hsl(228, 10, 5);
-  --color-app-primary-border: hsl(228, 10, 20);
+  /* custom styling below */
+
+  /* --color-app-primary: hsl(228, 10, 5);
+  --color-app-primary-border: hsl(228, 10, 20); */
+
+  --color-app-primary: hsl(218.82, 80%, 5%);
+  --color-app-primary-border: hsl(218.82, 30%, 20%);
 
   --color-app-secondary: hsl(224, 25, 12);
   --color-app-secondary-border: hsl(224, 25, 15);
+
+  --color-app-tertiary: hsl(221.54, 11.11%, 54.12%);
+
+  --color-highlight: hsl(210, 96.08%, 40%);
 }
 
 /*
