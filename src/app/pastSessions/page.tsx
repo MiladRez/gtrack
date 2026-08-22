@@ -114,38 +114,10 @@ export default function PastSessions() {
 	}
 
 	// Define custom styles for each day
-	const modifiersStyles = {
-		pushDays: {
-			borderRadius: "50%",
-			background: "radial-gradient(circle, #FF6500 50%, transparent 100%)",
-		},
-
-		pullDays: {
-			borderRadius: "50%",
-			background: "radial-gradient(circle, #03C988 50%, transparent 100%)",
-		},
-
-		legDays: {
-			borderRadius: "50%",
-			background: "radial-gradient(circle, #1C82AD 50%, transparent 100%)",
-		},
-
-		// selected: {
-		// 	border: "1px solid white",
-		// 	// bg: "none",
-		// 	transition: "none"
-		// },
-
-		// today: {
-		// 	backgroundColor: "#ffffff",
-		// 	color: "#000000"
-		// }
-	}
-
 	const modifiersClassNames: ModifiersClassNames = {
-		pushDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#FF6500_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
-		pullDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#03C988_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
-		legDays: "[&>button]:rounded-full [&>button]:bg-[radial-gradient(circle,#1C82AD_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		pushDays: "[&>button]:rounded-full text-primary [&>button]:bg-[radial-gradient(circle,#FF6500_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		pullDays: "[&>button]:rounded-full text-primary [&>button]:bg-[radial-gradient(circle,#03C988_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		legDays: "[&>button]:rounded-full text-primary [&>button]:bg-[radial-gradient(circle,#1C82AD_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
 	}
 
 	const SelectedSession = ({session}: {session: Session}) => {

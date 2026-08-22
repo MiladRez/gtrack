@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import {useEffect, useState, MouseEvent} from "react";
 import ExerciseCard from "@/components/custom/ExerciseCard";
 import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
 import {Exercise, ExerciseData, ExerciseItem} from "@/utils/ExerciseTypes";
@@ -18,63 +18,97 @@ export default function Push() {
 		{
 			id: "1",
 			name: "Incline Bench Press",
-			type: "Bar"
+			type: "Bar",
+			group: "Push"
 		},
 		{
 			id: "2",
 			name: "Incline Bench Press",
-			type: "Dumbbell"
+			type: "Dumbbell",
+			group: "Push"
 		},
 		{
 			id: "3",
 			name: "Flat Bench Press",
-			type: "Bar"
+			type: "Bar",
+			group: "Push"
 		},
 		{
 			id: "4",
 			name: "Flat Bench Press",
-			type: "Dumbbell"
+			type: "Dumbbell",
+			group: "Push"
 		},
 		{
 			id: "5",
 			name: "Machine Chest Press",
-			type: "Machine"
+			type: "Machine",
+			group: "Push"
 		},
 		{
 			id: "6",
 			name: "Chest Fly",
-			type: "Machine"
+			type: "Machine",
+			group: "Push"
 		},
 		{
 			id: "7",
 			name: "Machine Shoulder Press",
-			type: "Machine"
+			type: "Machine",
+			group: "Push"
 		},
 		{
 			id: "8",
 			name: "Shoulder Lateral Raises",
-			type: "Dumbbell"
+			type: "Dumbbell",
+			group: "Push"
 		},
 		{
 			id: "9",
 			name: "Tricep Pull Down",
-			type: "Machine"
+			type: "Machine",
+			group: "Push"
 		},
 		{
 			id: "10",
 			name: "Overhead Tricep Extension",
-			type: "Machine"
+			type: "Machine",
+			group: "Push"
 		},
 		{
 			id: "11",
 			name: "Dips",
-			type: "Machine"
+			type: "Machine",
+			group: "Push"
 		}
 	];
 
 	const [exerciseList, setExerciseList] = useState(new Map());
 	const [displayExerciseList, setDisplayExerciseList] = useState(new Map());
 	const [exercise, setExercise] = useState<Exercise | null>(null);
+
+	const [outerDialogOpen, setOuterDialogOpen] = useState(false);
+	const [innerDialogOpen, setInnerDialogOpen] = useState(false);
+
+	useEffect(() => {
+		const getTodaysSession = async () => {
+			try {
+				const response = await axios.get("/api/getTodaysSession", {
+					params: {type: "Push"}
+				});
+
+				const data = await response.data;
+				if (data) {
+					const dataMap = new Map(Object.entries(data.exerciseList)); // API response returns object, convert object to Map
+					setExerciseList(new Map(dataMap));
+					setDisplayExerciseList(new Map(dataMap));
+				}
+			} catch (error) {
+				console.error("Error fetching today's session: ", error);
+			}
+		};
+		getTodaysSession();
+	}, []);
 
 	const handleAddExercise = (exerciseItem: ExerciseItem) => {
 		// check if exercise already in exerciseList list
@@ -110,15 +144,19 @@ export default function Push() {
 	};
 
 	const removeExercise = (exerciseID: string) => {
-		console.log("I run!")
 		const newMap = new Map(exerciseList);
 		newMap.delete(exerciseID.toString());
 		setExerciseList(newMap);
-		// saveToDB(newMap); // save to DB
 	};
 
+	const deleteExerciseFromDB = (exerciseID: string) => {
+		const newMap = new Map(exerciseList);
+		newMap.delete(exerciseID.toString());
+		setExerciseList(newMap);
+		saveToDB(newMap); // save to DB
+	}
+
 	const saveToDB = async (exerciseList: Map<Exercise["id"], Exercise>) => {
-		console.log(exerciseList);
 		await axios.post(
 			"/api/addSession",
 			{
@@ -133,29 +171,18 @@ export default function Push() {
 		);
 	};
 
-	useEffect(() => {
-		const getTodaysSession = async () => {
-			try {
-				const response = await axios.get("/api/getTodaysSession", {
-					params: {type: "Push"}
-				});
+	const handleExerciseCardOnClick = (e: MouseEvent<HTMLDivElement>) => {
+		e.stopPropagation();
+		if (innerDialogOpen) {
+			setOuterDialogOpen(false)  
+		} else {
+			setOuterDialogOpen(true);
+		}
+	}
 
-				const data = await response.data;
-				if (data) {
-					const dataMap = new Map(Object.entries(data.exerciseList)); // API response returns object, convert object to Map
-					setExerciseList(new Map(dataMap));
-					setDisplayExerciseList(new Map(dataMap));
-				}
-			} catch (error) {
-				console.error("Error fetching today's session: ", error);
-			}
-		};
-		getTodaysSession();
-	}, []);
-
-	// useEffectSkipFirstRender(() => {
-	// 	console.log(exerciseList);
-	// }, [exerciseList]);
+	useEffectSkipFirstRender(() => {
+		setDisplayExerciseList(exerciseList);
+	}, [exerciseList]);
 
 	return (
 		<div className="w-screen flex justify-center">
@@ -194,11 +221,11 @@ export default function Push() {
 				</Dialog>
 				<div className="w-full flex flex-col gap-10 mb-10">
 					{Array.from(displayExerciseList).map(exercise => (
-						<Dialog key={exercise[0]}>
-							<DialogTrigger className="w-full px-4 md:w-1/2">
-								<ExerciseCard exercise={exercise[1]} />
-							</DialogTrigger>
-							<ExerciseDialog exercise={exercise[1]} exerciseList={exerciseList} updateExerciseList={updateExerciseList} />
+						<Dialog key={exercise[0]} open={outerDialogOpen}>
+							<div className="w-full md:w-1/2" onClick={(e) => handleExerciseCardOnClick(e)}>
+								<ExerciseCard exercise={exercise[1]} deleteExerciseFromDB={deleteExerciseFromDB} innerDialogOpen={innerDialogOpen} setInnerDialogOpen={setInnerDialogOpen} />
+							</div>
+							<ExerciseDialog exercise={exercise[1]} exerciseList={exerciseList} updateExerciseList={updateExerciseList} setOuterDialogOpen={setOuterDialogOpen} />
 						</Dialog>
 					))}
 				</div>

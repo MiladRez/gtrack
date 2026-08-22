@@ -13,17 +13,15 @@ export type ExerciseData = {
 	}
 }
 
-export type Exercise = {
-	id: string,
-	name: string,
-	type: "Dumbbell" | "Bar" | "Machine",
+export type Exercise = ExerciseItem & {
 	data: ExerciseData
 }
 
 export type ExerciseItem = {
 	id: string,
 	name: string,
-	type: "Dumbbell" | "Bar" | "Machine"
+	type: "Dumbbell" | "Bar" | "Machine",
+	group: "Push" | "Pull" | "Legs"
 }
 
 export type Session = {

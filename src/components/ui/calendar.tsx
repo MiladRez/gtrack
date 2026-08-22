@@ -47,7 +47,7 @@ function Calendar({
 				weekday: cn("text-muted-foreground flex-1 select-none rounded-md text-[0.8rem] font-normal", defaultClassNames.weekday),
 				week: cn("mt-2 flex w-full", defaultClassNames.week),
 				day: cn("group/day relative aspect-square h-full w-full select-none p-0 text-center data-[selected=true]:ring-1 ring-white ring-inset rounded-md data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground", defaultClassNames.day),
-				today: cn("bg-accent text-accent-foreground rounded-md", defaultClassNames.today),
+				today: cn("text-primary outline outline-white", defaultClassNames.today),
 				outside: cn("text-muted-foreground aria-selected:text-muted-foreground", defaultClassNames.outside),
 				disabled: cn("text-muted-foreground opacity-50", defaultClassNames.disabled),
 				hidden: cn("invisible", defaultClassNames.hidden),
