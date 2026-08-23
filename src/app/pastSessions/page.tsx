@@ -45,6 +45,20 @@ export default function PastSessions() {
 
 	useEffect(() => {
 		setPushSessions(sessions.filter(session => session.type === "Push"));
+		const sessionsList = [
+			sessions.filter(session => session.type === "Push"),
+			sessions.filter(session => session.type === "Pull"),
+			sessions.filter(session => session.type === "Legs")
+		]
+
+		console.log(sessionsList)
+		
+		for (const s of sessionsList) {
+			s.map((session) => {
+				const date = new Date(session.date);
+				date.setHours(date.getHours() + 4);
+			})
+		}
 		setPullSessions(sessions.filter(session => session.type === "Pull"));
 		setLegSessions(sessions.filter(session => session.type === "Legs"));
 	}, [sessions]);
@@ -89,9 +103,12 @@ export default function PastSessions() {
 				sessionDate.getDate() === todayDate.getDate()
 			);
 		});
+
+		console.log("I run")
 		
 
 		if (todaysSession.length > 0) {
+			console.log("I run too?")
 			const exerciseListMap = new Map<string, Exercise>(Object.entries(todaysSession[0].exerciseList));
 			const sessionDateFormat = new Date(todaysSession[0].date);
 			sessionDateFormat.setHours(sessionDateFormat.getHours()+4)
@@ -107,7 +124,7 @@ export default function PastSessions() {
 		} else {
 			setSelectedDaySession(todaysSession[0]);
 		}
-	}, [todayDate, sessions]);
+	}, [todayDate]);
 
 	// Define modifiers: changes the colour of the calendar days to the respective exercise day
 	// Push: Orange
@@ -145,6 +162,8 @@ export default function PastSessions() {
 					return ""
 			}
 		}
+
+		console.log(date)
 		
 		let linkHref = `/pastSessions/${_id}`
 		if (date.getFullYear() === todayDate?.getFullYear() &&
