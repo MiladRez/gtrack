@@ -9,6 +9,7 @@ import Link from "next/link";
 import {useEffect, useState} from "react";
 import "../../styles/calendar.css"
 import {ModifiersClassNames} from "react-day-picker";
+import {isToday} from "date-fns";
 
 export default function PastSessions() {
 
@@ -24,7 +25,7 @@ export default function PastSessions() {
 
 	const [selectedDaySession, setSelectedDaySession] = useState<Session>();
 	
-	const [date, setDate] = useState<Date | undefined>(new Date());
+	const [todayDate, setTodayDate] = useState<Date | undefined>(new Date());
 
 	useEffect(() => {
 		const getSessions = async () => {
@@ -52,6 +53,7 @@ export default function PastSessions() {
 		const dates: Date[] = [];
 		pushSessions.map((session) => {
 			const date = new Date(session.date);
+			date.setHours(date.getHours()+4) // timezone diff
 			dates.push(date);
 		});
 		setPushSessionDates(dates);
@@ -61,6 +63,7 @@ export default function PastSessions() {
 		const dates: Date[] = [];
 		pullSessions.map((session) => {
 			const date = new Date(session.date);
+			date.setHours(date.getHours()+4) // timezone diff
 			dates.push(date);
 		});
 		setPullSessionDates(dates);
@@ -70,6 +73,7 @@ export default function PastSessions() {
 		const dates: Date[] = [];
 		legSessions.map((session) => {
 			const date = new Date(session.date);
+			date.setHours(date.getHours()+4) // timezone diff
 			dates.push(date);
 		});
 		setLegSessionDates(dates);
@@ -78,17 +82,19 @@ export default function PastSessions() {
 	useEffect(() => {
 		const todaysSession = sessions.filter(session => {
 			const sessionDate = new Date(session.date);
-
+			sessionDate.setHours(sessionDate.getHours()+4)
 			return (
-				sessionDate.getFullYear() === date?.getFullYear() &&
-				sessionDate.getMonth() === date.getMonth() &&
-				sessionDate.getDate() === date.getDate()
+				sessionDate.getFullYear() === todayDate?.getFullYear() &&
+				sessionDate.getMonth() === todayDate.getMonth() &&
+				sessionDate.getDate() === todayDate.getDate()
 			);
 		});
+		
 
 		if (todaysSession.length > 0) {
 			const exerciseListMap = new Map<string, Exercise>(Object.entries(todaysSession[0].exerciseList));
 			const sessionDateFormat = new Date(todaysSession[0].date);
+			sessionDateFormat.setHours(sessionDateFormat.getHours()+4)
 
 			const sessionFormatted = {
 				_id: todaysSession[0]._id,
@@ -101,7 +107,7 @@ export default function PastSessions() {
 		} else {
 			setSelectedDaySession(todaysSession[0]);
 		}
-	}, [date, sessions]);
+	}, [todayDate, sessions]);
 
 	// Define modifiers: changes the colour of the calendar days to the respective exercise day
 	// Push: Orange
@@ -115,9 +121,9 @@ export default function PastSessions() {
 
 	// Define custom styles for each day
 	const modifiersClassNames: ModifiersClassNames = {
-		pushDays: "[&>button]:rounded-full text-primary [&>button]:bg-[radial-gradient(circle,#FF6500_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
-		pullDays: "[&>button]:rounded-full text-primary [&>button]:bg-[radial-gradient(circle,#03C988_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
-		legDays: "[&>button]:rounded-full text-primary [&>button]:bg-[radial-gradient(circle,#1C82AD_50%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		pushDays: "[&>button]:rounded-full text-primary [&>button]:bg-[radial-gradient(circle,#FF6500_60%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		pullDays: "[&>button]:rounded-full text-primary [&>button]:bg-[radial-gradient(circle,#03C988_60%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
+		legDays: "[&>button]:rounded-full text-primary [&>button]:bg-[radial-gradient(circle,#1C82AD_60%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
 	}
 
 	const SelectedSession = ({session}: {session: Session}) => {
@@ -139,9 +145,16 @@ export default function PastSessions() {
 					return ""
 			}
 		}
+		
+		let linkHref = `/pastSessions/${_id}`
+		if (date.getFullYear() === todayDate?.getFullYear() &&
+			date.getMonth() === todayDate.getMonth() &&
+			date.getDate() === todayDate.getDate()) {
+			linkHref = `/${type.toLowerCase()}`
+		}
 
 		return (
-			<Link href={`/pastSessions/${_id}`} >
+			<Link href={linkHref} >
 				<div className={`absolute w-full flex text-sm mt-4 sm:mt-16 rounded-md py-3 px-4 ${SessionCardBackgroundColor()}`}>
 					<div className="w-full flex flex-col">
 						<h2>{type}</h2>
@@ -176,15 +189,12 @@ export default function PastSessions() {
 				<div className="scale-150 mt-16 sm:mt-40">
 					<Calendar
 						mode="single"
-						selected={date}
-						onSelect={setDate}
+						selected={todayDate}
+						onSelect={setTodayDate}
 						modifiers={modifiers}
 						// modifiersStyles={modifiersStyles}
 						modifiersClassNames={modifiersClassNames}
-						className="rounded-md border border-slate-700 bg-slate-950"
-						classNames={{
-							selected: ""
-						}}
+						className="rounded-md border border-app-primary-border bg-app-primary"
 					/>	
 					{selectedDaySession ? 
 						<SelectedSession session={selectedDaySession} />

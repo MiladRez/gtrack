@@ -1,4 +1,5 @@
 import clientPromise from "@/libs/mongodb";
+import {time} from "console";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -14,15 +15,16 @@ export async function GET(request: Request) {
 	}
 
 	// const today = new Date();
+	// console.log(today)
 	// today.setHours(today.getHours() - 4); // EST timezone
 
-	const timezoneDiff = 4
+	const timeDiff = 4;
 
 	const dayStart = new Date();
-	dayStart.setHours(0 - timezoneDiff, 0, 0, 0);
+	dayStart.setHours(0 - timeDiff, 0, 0, 0);
 
 	const dayEnd = new Date();
-	dayEnd.setHours(23 - timezoneDiff, 59, 59, 999);
+	dayEnd.setHours(23 - timeDiff, 59, 59, 999);
 
 	try {
 		const client = await clientPromise;

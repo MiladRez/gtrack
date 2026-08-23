@@ -18,7 +18,7 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 	const [sessions, setSessions] = useState<Session[]>([]);
 	const [prevSession, setPrevSession] = useState<Session>();
 
-	const prevExerciseData = prevSession?.exerciseList[exercise.id].data
+	const prevExerciseData = prevSession?.exerciseList.get(exercise.id)?.data
 
 	useEffect(() => {
 		const getSessions = async () => {
@@ -27,6 +27,9 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 
 				const data = await response.data;
 				if (data) {
+					for (let i = 0; i < data.length; i++) {
+						data[i].exerciseList = new Map(Object.entries(data[i].exerciseList)) // API response is JSON, so we need to convert exerciseList to Map
+					}
 					setSessions(data);
 				}
 			} catch (error) {
@@ -37,6 +40,7 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 	}, []);
 
 	useEffect(() => {
+		console.log(sessions)
 		if (sessions) {
 			const typeSessions = sessions.filter(session => session.type === exercise.group)
 			if (typeSessions.length > 1) {
@@ -66,7 +70,7 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 		if (prevSession) {
 			return (
 				<div className="place-self-start">
-					{prevExerciseData[set].weight} lbs x {prevExerciseData[set].reps}
+					{prevExerciseData?.[set].weight} lbs x {prevExerciseData?.[set].reps}
 				</div>
 			)
 		} else {
@@ -78,8 +82,8 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 
 	const displayProgressIcons = (set: "set1" | "set2" | "set3") => {
 		let prevVolume = 0;
-		if (prevSession) {
-			prevVolume = prevExerciseData[set].weight * prevExerciseData[set].reps;
+		if (prevExerciseData) {
+			prevVolume = prevExerciseData?.[set].weight * prevExerciseData[set].reps;
 		}
 		
 		const currVolume = exercise.data[set].weight * exercise.data[set].reps;

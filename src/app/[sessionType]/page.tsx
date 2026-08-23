@@ -12,77 +12,11 @@ import ExerciseDialog from "@/components/custom/ExerciseDialog";
 import {Dialog, DialogTrigger} from "@/components/ui/dialog";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIconDropdownMenu";
+import {legsExercises, pullExercises, pushExercises} from "@/utils/Exercises";
 
-export default function Push() {
-	const exercises: ExerciseItem[] = [
-		{
-			id: "1",
-			name: "Incline Bench Press",
-			type: "Bar",
-			group: "Push"
-		},
-		{
-			id: "2",
-			name: "Incline Bench Press",
-			type: "Dumbbell",
-			group: "Push"
-		},
-		{
-			id: "3",
-			name: "Flat Bench Press",
-			type: "Bar",
-			group: "Push"
-		},
-		{
-			id: "4",
-			name: "Flat Bench Press",
-			type: "Dumbbell",
-			group: "Push"
-		},
-		{
-			id: "5",
-			name: "Machine Chest Press",
-			type: "Machine",
-			group: "Push"
-		},
-		{
-			id: "6",
-			name: "Chest Fly",
-			type: "Machine",
-			group: "Push"
-		},
-		{
-			id: "7",
-			name: "Machine Shoulder Press",
-			type: "Machine",
-			group: "Push"
-		},
-		{
-			id: "8",
-			name: "Shoulder Lateral Raises",
-			type: "Dumbbell",
-			group: "Push"
-		},
-		{
-			id: "9",
-			name: "Tricep Pull Down",
-			type: "Machine",
-			group: "Push"
-		},
-		{
-			id: "10",
-			name: "Overhead Tricep Extension",
-			type: "Machine",
-			group: "Push"
-		},
-		{
-			id: "11",
-			name: "Dips",
-			type: "Machine",
-			group: "Push"
-		}
-	];
+export default function TodaysSessionPage({params}: {params: {sessionType: string}}) {
 
+	const [sessionType, setSessionType] = useState("");
 	const [exerciseList, setExerciseList] = useState(new Map());
 	const [displayExerciseList, setDisplayExerciseList] = useState(new Map());
 	const [exercise, setExercise] = useState<Exercise | null>(null);
@@ -91,10 +25,22 @@ export default function Push() {
 	const [innerDialogOpen, setInnerDialogOpen] = useState(false);
 
 	useEffect(() => {
+		const getSessionType = async () => {
+			try {
+				const {sessionType} = await params;
+				setSessionType(sessionType.charAt(0).toUpperCase() + sessionType.slice(1));
+			} catch (e) {
+				console.log("Error fetching sessionType: ", e);
+			}
+		};
+		getSessionType();
+	}, []);
+
+	useEffect(() => {
 		const getTodaysSession = async () => {
 			try {
 				const response = await axios.get("/api/getTodaysSession", {
-					params: {type: "Push"}
+					params: {type: sessionType}
 				});
 
 				const data = await response.data;
@@ -107,8 +53,11 @@ export default function Push() {
 				console.error("Error fetching today's session: ", error);
 			}
 		};
-		getTodaysSession();
-	}, []);
+		if (sessionType != "") {
+			getTodaysSession();
+		}
+		
+	}, [sessionType]);
 
 	const handleAddExercise = (exerciseItem: ExerciseItem) => {
 		// check if exercise already in exerciseList list
@@ -132,6 +81,19 @@ export default function Push() {
 			});
 		}
 	};
+
+	const getSessionExercises = (sessionType: string) => {
+		switch (sessionType) {
+			case "Push":
+				return pushExercises;
+			case "Pull":
+				return pullExercises;
+			case "Legs":
+				return legsExercises;
+			default:
+				return pushExercises;
+		}
+	}
 
 	const updateExerciseList = (exerciseID: string, data: ExerciseData) => {
 		const newMap = new Map(exerciseList);
@@ -160,7 +122,7 @@ export default function Push() {
 		await axios.post(
 			"/api/addSession",
 			{
-				type: "Push",
+				type: sessionType,
 				exerciseList: Object.fromEntries(exerciseList)
 			},
 			{
@@ -197,12 +159,12 @@ export default function Push() {
 						Past Sessions
 					</Button>
 				</Link>
-				<h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">Push</h2>
+				<h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">{sessionType}</h2>
 				<Dialog>
 					<DropdownMenu>
 						<DropdownMenuTrigger className="px-6 py-4 bg-slate-900 border border-slate-700 rounded-lg sm:mt-20">Add Exercise</DropdownMenuTrigger>
 						<DropdownMenuContent>
-							{exercises
+							{getSessionExercises(sessionType)
 								.filter(excer => !exerciseList.get(excer.id))
 								.map(exercise => (
 									<DialogTrigger key={exercise.id} className="w-full flex">
