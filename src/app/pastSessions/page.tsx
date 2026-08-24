@@ -14,10 +14,6 @@ import {isToday} from "date-fns";
 export default function PastSessions() {
 
 	const [sessions, setSessions] = useState<Session[]>([]);
-	
-	const [pushSessions, setPushSessions] = useState<Session[]>([]);
-	const [pullSessions, setPullSessions] = useState<Session[]>([]);
-	const [legSessions, setLegSessions] = useState<Session[]>([]);
 
 	const [pushSessionDates, setPushSessionDates] = useState<Date[]>([]);
 	const [pullSessionDates, setPullSessionDates] = useState<Date[]>([]);
@@ -44,40 +40,32 @@ export default function PastSessions() {
 	}, []);
 
 	useEffect(() => {
-		setPushSessions(sessions.filter(session => session.type === "Push"));
-		setPullSessions(sessions.filter(session => session.type === "Pull"));
-		setLegSessions(sessions.filter(session => session.type === "Legs"));
+		const sessionsList = [
+			sessions.filter(session => session.type === "Push"),
+			sessions.filter(session => session.type === "Pull"),
+			sessions.filter(session => session.type === "Legs")
+		]
+
+		const sessionsDates: Map<string, Date[]> = new Map();
+
+		for (const s in sessionsList) {
+			const dates: Date[] = [];
+			sessionsList[s].map((session) => {
+				const date = new Date(session.date);
+				date.setHours(date.getHours() + 4);
+				dates.push(date)
+			});
+
+			if (sessionsList[s].length > 0) {
+				sessionsDates.set(sessionsList[s][0].type, dates)
+			}	
+		}
+		
+		setPushSessionDates(sessionsDates.get("Push") ?? [])
+		setPullSessionDates(sessionsDates.get("Pull") ?? [])
+		setLegSessionDates(sessionsDates.get("Legs") ?? [])
+
 	}, [sessions]);
-
-	useEffect(() => {
-		const dates: Date[] = [];
-		pushSessions.map((session) => {
-			const date = new Date(session.date);
-			date.setHours(date.getHours()+4) // timezone diff
-			dates.push(date);
-		});
-		setPushSessionDates(dates);
-	}, [pushSessions]);
-
-	useEffect(() => {
-		const dates: Date[] = [];
-		pullSessions.map((session) => {
-			const date = new Date(session.date);
-			date.setHours(date.getHours()+4) // timezone diff
-			dates.push(date);
-		});
-		setPullSessionDates(dates);
-	}, [pullSessions]);
-
-	useEffect(() => {
-		const dates: Date[] = [];
-		legSessions.map((session) => {
-			const date = new Date(session.date);
-			date.setHours(date.getHours()+4) // timezone diff
-			dates.push(date);
-		});
-		setLegSessionDates(dates);
-	}, [legSessions]);
 
 	useEffect(() => {
 		const todaysSession = sessions.filter(session => {
@@ -88,8 +76,7 @@ export default function PastSessions() {
 				sessionDate.getMonth() === todayDate.getMonth() &&
 				sessionDate.getDate() === todayDate.getDate()
 			);
-		});
-		
+		});		
 
 		if (todaysSession.length > 0) {
 			const exerciseListMap = new Map<string, Exercise>(Object.entries(todaysSession[0].exerciseList));
@@ -107,7 +94,7 @@ export default function PastSessions() {
 		} else {
 			setSelectedDaySession(todaysSession[0]);
 		}
-	}, [todayDate, sessions]);
+	}, [todayDate]);
 
 	// Define modifiers: changes the colour of the calendar days to the respective exercise day
 	// Push: Orange
@@ -145,6 +132,8 @@ export default function PastSessions() {
 					return ""
 			}
 		}
+
+		console.log(date)
 		
 		let linkHref = `/pastSessions/${_id}`
 		if (date.getFullYear() === todayDate?.getFullYear() &&

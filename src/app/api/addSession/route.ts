@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
 
-	const timezoneDiff = 4
+	const timezoneDiff = 4 // server JS always uses UTC date for some reason, client JS uses browser which is client's timezone
 
 	const today = new Date();
 	today.setHours(today.getHours() - timezoneDiff); // EST timezone
