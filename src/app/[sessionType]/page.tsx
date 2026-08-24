@@ -11,11 +11,10 @@ import {ChevronLeft} from "lucide-react";
 import ExerciseDialog from "@/components/custom/ExerciseDialog";
 import {Dialog, DialogTrigger} from "@/components/ui/dialog";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIconDropdownMenu";
+import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIcon";
 import {legsExercises, pullExercises, pushExercises} from "@/utils/Exercises";
 
 export default function TodaysSessionPage({params}: {params: {sessionType: string}}) {
-
 	const [sessionType, setSessionType] = useState("");
 	const [exerciseList, setExerciseList] = useState(new Map());
 	const [displayExerciseList, setDisplayExerciseList] = useState(new Map());
@@ -56,7 +55,6 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 		if (sessionType != "") {
 			getTodaysSession();
 		}
-		
 	}, [sessionType]);
 
 	const handleAddExercise = (exerciseItem: ExerciseItem) => {
@@ -93,7 +91,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 			default:
 				return pushExercises;
 		}
-	}
+	};
 
 	const updateExerciseList = (exerciseID: string, data: ExerciseData) => {
 		const newMap = new Map(exerciseList);
@@ -116,7 +114,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 		newMap.delete(exerciseID.toString());
 		setExerciseList(newMap);
 		saveToDB(newMap); // save to DB
-	}
+	};
 
 	const saveToDB = async (exerciseList: Map<Exercise["id"], Exercise>) => {
 		await axios.post(
@@ -136,11 +134,11 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 	const handleExerciseCardOnClick = (e: MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
 		if (innerDialogOpen) {
-			setOuterDialogOpen(false)  
+			setOuterDialogOpen(false);
 		} else {
 			setOuterDialogOpen(true);
 		}
-	}
+	};
 
 	useEffectSkipFirstRender(() => {
 		setDisplayExerciseList(exerciseList);
@@ -149,17 +147,19 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 	return (
 		<div className="w-screen flex justify-center">
 			<div className="max-w-(--breakpoint-md) w-full flex flex-col items-center gap-12 mx-4">
-				<Link href="/" className="self-start">
-					<Button variant="outline" size="icon" className="bg-slate-900 border-slate-700 mt-2 sm:mt-20">
-						<ChevronLeft />
-					</Button>
-				</Link>
-				<Link href="/pastSessions" className="absolute right-0 top-5 sm:hidden">
-					<Button variant="ghost" className="underline">
-						Past Sessions
-					</Button>
-				</Link>
-				<h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">{sessionType}</h2>
+				<div className="absolute w-full flex justify-between top-5 px-5">
+					<Link href="/" className="self-start">
+						<Button variant="outline" size="icon" className="bg-slate-900 border-slate-700 sm:mt-20">
+							<ChevronLeft />
+						</Button>
+					</Link>
+					<Link href="/pastSessions" className="sm:hidden">
+						<Button variant="ghost" className="underline px-0">
+							Past Sessions
+						</Button>
+					</Link>
+				</div>
+				<h2 className="scroll-m-20 mt-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">{sessionType}</h2>
 				<Dialog>
 					<DropdownMenu>
 						<DropdownMenuTrigger className="px-6 py-4 bg-slate-900 border border-slate-700 rounded-lg sm:mt-20">Add Exercise</DropdownMenuTrigger>
@@ -168,10 +168,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 								.filter(excer => !exerciseList.get(excer.id))
 								.map(exercise => (
 									<DialogTrigger key={exercise.id} className="w-full flex">
-										<DropdownMenuItem
-											className="w-full flex justify-between"
-											onClick={() => handleAddExercise(exercise)}
-										>
+										<DropdownMenuItem className="w-full flex justify-between" onClick={() => handleAddExercise(exercise)}>
 											{exercise.name}
 											<ExerciseIconDropdownMenu type={exercise.type} />
 										</DropdownMenuItem>
@@ -184,7 +181,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 				<div className="w-full flex flex-col gap-10 mb-10">
 					{Array.from(displayExerciseList).map(exercise => (
 						<Dialog key={exercise[0]} open={outerDialogOpen}>
-							<div className="w-full md:w-1/2" onClick={(e) => handleExerciseCardOnClick(e)}>
+							<div className="w-full md:w-1/2" onClick={e => handleExerciseCardOnClick(e)}>
 								<ExerciseCard exercise={exercise[1]} deleteExerciseFromDB={deleteExerciseFromDB} innerDialogOpen={innerDialogOpen} setInnerDialogOpen={setInnerDialogOpen} />
 							</div>
 							<ExerciseDialog exercise={exercise[1]} exerciseList={exerciseList} updateExerciseList={updateExerciseList} setOuterDialogOpen={setOuterDialogOpen} />

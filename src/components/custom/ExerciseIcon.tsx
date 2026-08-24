@@ -1,9 +1,9 @@
-type ExerciseIconDropdownMenuProps = {
+type ExerciseIconProps = {
 	type: "Dumbbell" | "Bar" | "Machine"
 	color?: "black" | "white"
 }
 
-export default function ExerciseIconDropdownMenu({type, color = "black"}: ExerciseIconDropdownMenuProps) {
+export default function ExerciseIcon({type, color = "black"}: ExerciseIconProps) {
 	const colorClass = color === "white" ? "text-white" : "text-black";
 	const iconClass = `${colorClass} fill-current`;
 

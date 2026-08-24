@@ -1,31 +1,38 @@
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
 	return (
 		<main className="w-screen flex flex-col justify-center items-center">
-			<div className="w-full max-w-(--breakpoint-md) flex flex-col justify-center items-center mt-40">
-				<h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-40">
-					Gymtrack
+			<div className="w-full max-w-(--breakpoint-md) flex flex-col justify-center items-center mt-10">
+				<h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-20">
+					<Image
+						src="/gtrack-logo.png"
+						alt="gtrack logo"
+						height={180}
+						width={180}
+						loading="eager"
+					/>
 				</h1>
 				<div className="flex flex-col items-center w-full max-w-(--breakpoint-md) gap-8">
 					<Link href="/push" className="w-1/4">
-						<Button variant="outline" className="px-4 py-6 bg-slate-950 w-full">
+						<Button variant="outline" className="px-4 py-6 bg-app-primary w-full">
 							Push
 						</Button>
 					</Link>
 					<Link href="/pull" className="w-1/4">
-						<Button variant="outline" className="px-4 py-6 bg-slate-950 w-full">
+						<Button variant="outline" className="px-4 py-6 bg-app-primary w-full">
 							Pull
 						</Button>
 					</Link>
 					<Link href="/legs" className="w-1/4">
-						<Button variant="outline" className="px-4 py-6 bg-slate-950 w-full">
+						<Button variant="outline" className="px-4 py-6 bg-app-primary w-full">
 							Legs
 						</Button>
 					</Link>
 					<Link href="/pastSessions" className="sm:w-1/4 mt-12">
-						<Button variant="outline" className="px-4 py-6 bg-slate-950 w-full">
+						<Button variant="outline" className="px-4 py-6 bg-app-primary w-full">
 							Past Sessions
 						</Button>
 					</Link>

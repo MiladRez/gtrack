@@ -1,14 +1,8 @@
-'use client'
+"use client";
 
+import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIcon";
 import {Button} from "@/components/ui/button";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-  } from "@/components/ui/table"
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
 import {Exercise, Session} from "@/utils/ExerciseTypes";
 import axios from "axios";
@@ -16,9 +10,9 @@ import {ChevronLeft} from "lucide-react";
 import Link from "next/link";
 import {useParams} from "next/navigation";
 import {useEffect, useState} from "react";
+import ExerciseIcon from "../../../components/custom/ExerciseIcon";
 
 export default function SessionDetails() {
-
 	const params = useParams(); // params is a promise
 
 	const [sessionID, setSessionID] = useState<string | null>(null);
@@ -27,7 +21,7 @@ export default function SessionDetails() {
 	const [dateString, setDateString] = useState<string>("");
 	const [timeString, setTimeString] = useState<string>("");
 
-	const [exerciseList, setExerciseList] = useState<(Exercise)[]>([]);
+	const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
 
 	useEffect(() => {
 		async function unwrapParams() {
@@ -41,7 +35,7 @@ export default function SessionDetails() {
 		const getSessionByID = async () => {
 			try {
 				const response = await axios.get("/api/getSessionByID", {
-					params: { id: sessionID }
+					params: {id: sessionID}
 				});
 
 				const data = await response.data;
@@ -59,7 +53,7 @@ export default function SessionDetails() {
 
 	useEffect(() => {
 		if (session) {
-			const sessionDate = new Date(session.date)
+			const sessionDate = new Date(session.date);
 			setDateString(`${sessionDate.toLocaleDateString("en-CA", {weekday: "short"})}, ${sessionDate.toLocaleDateString("en-CA", {month: "short"})} ${sessionDate.getDate()}, ${sessionDate.getFullYear()}`);
 			setTimeString(`${sessionDate.toLocaleTimeString("en-CA", {hour12: true, hour: "numeric", minute: "2-digit"})}`);
 
@@ -67,32 +61,27 @@ export default function SessionDetails() {
 		}
 	}, [session]);
 
-	console.log(exerciseList)
+	console.log(exerciseList);
 
 	return (
-		<div className="max-w-(--breakpoint-md) flex flex-col items-center gap-12 mx-4">
-			<Link href="/pastSessions" className="self-start">
+		<div className="max-w-(--breakpoint-md) flex flex-col items-center gap-6 mx-6">
+			<Link href="/pastSessions" className="absolute top-3 left-5">
 				<Button variant="outline" size="icon" className="bg-slate-900 border-slate-700 mt-2 sm:mt-20">
 					<ChevronLeft />
 				</Button>
 			</Link>
-			<div className="w-full flex justify-between px-2 py-6">
-				<div>
-					{session?.type}
-				</div>
-				<div>
-					{dateString}
-				</div>
-				<div>
-					{timeString}
-				</div>
+			<div className="w-full flex justify-between py-6">
+				<div>{session?.type}</div>
+				<div>{dateString}</div>
+				<div>{timeString}</div>
 			</div>
 			{exerciseList.map((exercise, index) => (
-				<div key={index} className="w-full mx-6">
-					<div className="flex justify-center px-4 py-6">
+				<div key={index} className="w-full flex flex-col px-12 border bg-app-primary border-app-primary-border">
+					<div className="flex justify-center gap-4 px-4 pt-10">
 						{exercise.name}
+						<ExerciseIcon type={exercise.type} color="white" />
 					</div>
-					<Table>
+					<Table className="my-8">
 						<TableHeader>
 							<TableRow style={{backgroundColor: "transparent"}}>
 								<TableHead className="text-center">Set #</TableHead>
@@ -113,5 +102,5 @@ export default function SessionDetails() {
 				</div>
 			))}
 		</div>
-	)
+	);
 }

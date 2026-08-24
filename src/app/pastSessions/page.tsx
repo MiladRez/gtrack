@@ -21,7 +21,7 @@ export default function PastSessions() {
 
 	const [selectedDaySession, setSelectedDaySession] = useState<Session>();
 	
-	const [todayDate, setTodayDate] = useState<Date | undefined>(new Date());
+	const [currentDate, setCurrentDate] = useState<Date | undefined>(new Date());
 
 	useEffect(() => {
 		const getSessions = async () => {
@@ -72,9 +72,9 @@ export default function PastSessions() {
 			const sessionDate = new Date(session.date);
 			sessionDate.setHours(sessionDate.getHours()+4)
 			return (
-				sessionDate.getFullYear() === todayDate?.getFullYear() &&
-				sessionDate.getMonth() === todayDate.getMonth() &&
-				sessionDate.getDate() === todayDate.getDate()
+				sessionDate.getFullYear() === currentDate?.getFullYear() &&
+				sessionDate.getMonth() === currentDate.getMonth() &&
+				sessionDate.getDate() === currentDate.getDate()
 			);
 		});		
 
@@ -94,7 +94,7 @@ export default function PastSessions() {
 		} else {
 			setSelectedDaySession(todaysSession[0]);
 		}
-	}, [todayDate]);
+	}, [currentDate]);
 
 	// Define modifiers: changes the colour of the calendar days to the respective exercise day
 	// Push: Orange
@@ -136,6 +136,7 @@ export default function PastSessions() {
 		console.log(date)
 		
 		let linkHref = `/pastSessions/${_id}`
+		const todayDate = new Date();
 		if (date.getFullYear() === todayDate?.getFullYear() &&
 			date.getMonth() === todayDate.getMonth() &&
 			date.getDate() === todayDate.getDate()) {
@@ -168,7 +169,7 @@ export default function PastSessions() {
 		<div className="w-screen flex justify-center">
 			<div className="max-w-(--breakpoint-md) w-full flex flex-col items-center gap-12 mx-4">
 				<Link href="/" className="self-start">
-					<Button variant="outline" size="icon" className="bg-slate-900 border-slate-700 mt-2 sm:mt-20">
+					<Button variant="outline" size="icon" className="absolute bg-slate-900 border-slate-700 top-5 left-5 sm:mt-20">
 						<ChevronLeft />
 					</Button>
 				</Link>
@@ -178,8 +179,8 @@ export default function PastSessions() {
 				<div className="scale-150 mt-16 sm:mt-40">
 					<Calendar
 						mode="single"
-						selected={todayDate}
-						onSelect={setTodayDate}
+						selected={currentDate}
+						onSelect={setCurrentDate}
 						modifiers={modifiers}
 						// modifiersStyles={modifiersStyles}
 						modifiersClassNames={modifiersClassNames}

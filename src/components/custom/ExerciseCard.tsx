@@ -1,5 +1,5 @@
 import {Exercise, ExerciseData, Session} from "@/utils/ExerciseTypes";
-import ExerciseIconDropdownMenu from "./ExerciseIconDropdownMenu";
+import ExerciseIcon from "./ExerciseIcon";
 import ProgressIcons from "./ProgressIcons";
 import {DialogTrigger, Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogOverlay} from "../ui/dialog";
 import {Button} from "../ui/button";
@@ -14,11 +14,10 @@ type ExerciseCardProps = {
 };
 
 export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialogOpen, setInnerDialogOpen}: ExerciseCardProps) {
-
 	const [sessions, setSessions] = useState<Session[]>([]);
 	const [prevSession, setPrevSession] = useState<Session>();
 
-	const prevExerciseData = prevSession?.exerciseList.get(exercise.id)?.data
+	const prevExerciseData = prevSession?.exerciseList.get(exercise.id)?.data;
 
 	useEffect(() => {
 		const getSessions = async () => {
@@ -28,7 +27,7 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 				const data = await response.data;
 				if (data) {
 					for (let i = 0; i < data.length; i++) {
-						data[i].exerciseList = new Map(Object.entries(data[i].exerciseList)) // API response is JSON, so we need to convert exerciseList to Map
+						data[i].exerciseList = new Map(Object.entries(data[i].exerciseList)); // API response is JSON, so we need to convert exerciseList to Map
 					}
 					setSessions(data);
 				}
@@ -40,12 +39,12 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 	}, []);
 
 	useEffect(() => {
-		console.log(sessions)
+		console.log(sessions);
 		if (sessions) {
-			const typeSessions = sessions.filter(session => session.type === exercise.group)
+			const typeSessions = sessions.filter(session => session.type === exercise.group);
 			if (typeSessions.length > 1) {
-				const previousSession = typeSessions.slice(0,-1).reduce((latest, current) => {
-					return current.date > latest.date ? current : latest
+				const previousSession = typeSessions.slice(0, -1).reduce((latest, current) => {
+					return current.date > latest.date ? current : latest;
 				}, sessions[1]);
 				setPrevSession(previousSession);
 			}
@@ -54,17 +53,15 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 
 	const displayCurrentExerciseData = (set: "set1" | "set2" | "set3") => {
 		if (exercise.data[set].weight == 0 || exercise.data[set].reps == 0) {
-			return (
-				<div className="text-muted-foreground place-self-start">-</div>
-			)
+			return <div className="text-muted-foreground place-self-start">-</div>;
 		} else {
 			return (
 				<div className="place-self-start">
 					{exercise.data[set].weight} lbs x {exercise.data[set].reps}
 				</div>
-			)
+			);
 		}
-	}
+	};
 
 	const displayPreviousExerciseData = (set: "set1" | "set2" | "set3") => {
 		if (prevSession) {
@@ -72,20 +69,18 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 				<div className="place-self-start">
 					{prevExerciseData?.[set].weight} lbs x {prevExerciseData?.[set].reps}
 				</div>
-			)
+			);
 		} else {
-			return (
-				<div className="text-muted-foreground place-self-start">-</div>
-			)
+			return <div className="text-muted-foreground place-self-start">-</div>;
 		}
-	}
+	};
 
 	const displayProgressIcons = (set: "set1" | "set2" | "set3") => {
 		let prevVolume = 0;
 		if (prevExerciseData) {
 			prevVolume = prevExerciseData?.[set].weight * prevExerciseData[set].reps;
 		}
-		
+
 		const currVolume = exercise.data[set].weight * exercise.data[set].reps;
 
 		if (prevVolume < currVolume) {
@@ -93,73 +88,69 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 				<div className="place-self-center">
 					<ProgressIcons type="up-arrow" />
 				</div>
-			)
+			);
 		} else if (prevVolume > currVolume) {
 			return (
 				<div className="place-self-center">
 					<ProgressIcons type="down-arrow" />
 				</div>
-			)
+			);
 		} else {
 			return (
 				<div className="place-self-center">
 					<ProgressIcons type="equals" color="white" />
-				</div>	
-			)
+				</div>
+			);
 		}
-	}
+	};
 
 	const handleCrossOnClick = (e: MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
 		setInnerDialogOpen(true);
-	}
+	};
 
 	const handleDeleteExercise = () => {
-		deleteExerciseFromDB(exercise.id)
+		deleteExerciseFromDB(exercise.id);
 		setInnerDialogOpen(false);
-	}
+	};
 
 	// alert dialog for confirming if user wants to delete the exercise
 	const AlertDialog = () => {
 		return (
-			<DialogContent
-				className="bg-app-primary border border-app-primary-border"
-				onClick={(e) => e.stopPropagation()}
-				onPointerDownOutside={() => setInnerDialogOpen(false)}
-			>
+			<DialogContent className="bg-app-primary border border-app-primary-border" onClick={e => e.stopPropagation()} onPointerDownOutside={() => setInnerDialogOpen(false)}>
 				<DialogHeader>
 					<DialogTitle>
-						<div className="flex flex-col items-center gap-3 mb-4 text-highlight">
-							Are you sure you want to remove this exercise?
-						</div>
+						<div className="flex flex-col items-center gap-3 mb-4 text-highlight">Are you sure you want to remove this exercise?</div>
 					</DialogTitle>
 				</DialogHeader>
 				<DialogFooter>
 					<DialogClose asChild>
-						<Button variant="destructive" className="py-6 md:py-0 border border-app-primary-border" onClick={handleDeleteExercise}>Remove</Button>
+						<Button variant="destructive" className="py-6 md:py-0 border border-app-primary-border" onClick={handleDeleteExercise}>
+							Remove
+						</Button>
 					</DialogClose>
 					<DialogClose asChild>
-						<Button className="py-6 md:py-0 border border-app-primary-border bg-app-tertiary" onClick={() => setInnerDialogOpen(false)}>Cancel</Button>
+						<Button className="py-6 md:py-0 border border-app-primary-border bg-app-tertiary" onClick={() => setInnerDialogOpen(false)}>
+							Cancel
+						</Button>
 					</DialogClose>
 				</DialogFooter>
 			</DialogContent>
-		)
-	}
+		);
+	};
 
 	return (
 		<div className="bg-app-primary px-4 py-4 border border-app-primary-border rounded-xl flex flex-col gap-4 focus:outline-none">
 			<div className="flex justify-between">
 				<div className="flex gap-4">
 					<div className="border border-app-primary-border rounded-md px-2 py-2">
-						<ExerciseIconDropdownMenu type={exercise.type} color="white" />
+						<ExerciseIcon type={exercise.type} color="white" />
 					</div>
-					<div className="mt-1 text-highlight">
-						{exercise.name}
-					</div>
+					<div className="mt-1 text-highlight">{exercise.name}</div>
 				</div>
 				<Dialog open={innerDialogOpen}>
 					<DialogOverlay className="bg-black/40 backdrop-blur-sm" />
-					<div onClick={(e) => handleCrossOnClick(e)}>
+					<div onClick={e => handleCrossOnClick(e)}>
 						<svg className={`w-6 h-6 text-[#dd1c1a]`}>
 							<use href="/icons.svg#cross" />
 						</svg>
