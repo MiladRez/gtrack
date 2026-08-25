@@ -15,9 +15,10 @@ type ExerciseCardProps = {
 
 export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialogOpen, setInnerDialogOpen}: ExerciseCardProps) {
 	const [sessions, setSessions] = useState<Session[]>([]);
-	const [prevSession, setPrevSession] = useState<Session>();
+	const [prevSession, setPrevSession] = useState<Session | null>(null);
+	const [prevSessionData, setPrevSessionData] = useState<ExerciseData>();
 
-	const prevExerciseData = prevSession?.exerciseList.get(exercise.id)?.data;
+	const numOfSets = 3;
 
 	useEffect(() => {
 		const getSessions = async () => {
@@ -39,7 +40,6 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 	}, []);
 
 	useEffect(() => {
-		console.log(sessions);
 		if (sessions) {
 			const typeSessions = sessions.filter(session => session.type === exercise.group);
 			if (typeSessions.length > 1) {
@@ -51,58 +51,12 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 		}
 	}, [sessions]);
 
-	const displayCurrentExerciseData = (set: "set1" | "set2" | "set3") => {
-		if (exercise.data[set].weight == 0 || exercise.data[set].reps == 0) {
-			return <div className="text-muted-foreground place-self-start">-</div>;
-		} else {
-			return (
-				<div className="place-self-start">
-					{exercise.data[set].weight} lbs x {exercise.data[set].reps}
-				</div>
-			);
+	useEffect(() => {
+		// check if prevSession exists and if this specific exercise exists in the previous session
+		if (prevSession && prevSession.exerciseList.get(exercise.id)) {
+			setPrevSessionData(prevSession.exerciseList.get(exercise.id)?.data)
 		}
-	};
-
-	const displayPreviousExerciseData = (set: "set1" | "set2" | "set3") => {
-		if (prevSession) {
-			return (
-				<div className="place-self-start">
-					{prevExerciseData?.[set].weight} lbs x {prevExerciseData?.[set].reps}
-				</div>
-			);
-		} else {
-			return <div className="text-muted-foreground place-self-start">-</div>;
-		}
-	};
-
-	const displayProgressIcons = (set: "set1" | "set2" | "set3") => {
-		let prevVolume = 0;
-		if (prevExerciseData) {
-			prevVolume = prevExerciseData?.[set].weight * prevExerciseData[set].reps;
-		}
-
-		const currVolume = exercise.data[set].weight * exercise.data[set].reps;
-
-		if (prevVolume < currVolume) {
-			return (
-				<div className="place-self-center">
-					<ProgressIcons type="up-arrow" />
-				</div>
-			);
-		} else if (prevVolume > currVolume) {
-			return (
-				<div className="place-self-center">
-					<ProgressIcons type="down-arrow" />
-				</div>
-			);
-		} else {
-			return (
-				<div className="place-self-center">
-					<ProgressIcons type="equals" color="white" />
-				</div>
-			);
-		}
-	};
+	}, [prevSession])
 
 	const handleCrossOnClick = (e: MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
@@ -139,6 +93,78 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 		);
 	};
 
+	const ExerciseSets = () => {
+
+		const displayCurrentExerciseData = (set: string) => {
+			if (exercise.data[set as keyof ExerciseData].weight == 0 || exercise.data[set as keyof ExerciseData].reps == 0) {
+				return <div className="text-muted-foreground place-self-start">-</div>;
+			} else {
+				return (
+					<div className="place-self-start">
+						{exercise.data[set as keyof ExerciseData].weight} lbs x {exercise.data[set as keyof ExerciseData].reps}
+					</div>
+				);
+			}
+		};
+
+		const displayPreviousExerciseData = (set: string) => {
+			if (prevSessionData) {
+				return (
+					<div className="place-self-start">
+						{prevSessionData[set as keyof ExerciseData].weight} lbs x {prevSessionData[set as keyof ExerciseData].reps}
+					</div>
+				);
+			} else {
+				return <div className="text-muted-foreground place-self-start">-</div>;
+			}
+		};
+
+		const displayProgressIcons = (set: string) => {
+			let prevVolume = 0;
+			if (prevSessionData) {
+				prevVolume = prevSessionData?.[set as keyof ExerciseData].weight * prevSessionData[set as keyof ExerciseData].reps;
+			}
+
+			const currVolume = exercise.data[set as keyof ExerciseData].weight * exercise.data[set as keyof ExerciseData].reps;
+
+			if (prevVolume < currVolume) {
+				return (
+					<div className="place-self-center">
+						<ProgressIcons type="up-arrow" />
+					</div>
+				);
+			} else if (prevVolume > currVolume) {
+				return (
+					<div className="place-self-center">
+						<ProgressIcons type="down-arrow" />
+					</div>
+				);
+			} else {
+				return (
+					<div className="place-self-center">
+						<ProgressIcons type="equals" color="white" />
+					</div>
+				);
+			}
+		};
+
+		const exerciseSets = [];
+
+		for (let i = 1; i <= numOfSets; i++) {
+			const setNum = "set" + i
+			exerciseSets.push(
+				<div key={setNum} className="col-span-4 grid grid-cols-subgrid text-sm">
+					<div className="place-self-start pl-3">{i}</div>
+					{displayPreviousExerciseData(setNum)}
+					{displayCurrentExerciseData(setNum)}
+					{displayProgressIcons(setNum)}
+				</div>
+			)
+		}
+
+		return exerciseSets;
+	}
+
 	return (
 		<div className="bg-app-primary px-4 py-4 border border-app-primary-border rounded-xl flex flex-col gap-4 focus:outline-none">
 			<div className="flex justify-between">
@@ -165,24 +191,7 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 					<div>Today</div>
 					<div>Progress</div>
 				</div>
-				<div className="col-span-4 grid grid-cols-subgrid text-sm">
-					<div className="place-self-start pl-3">1</div>
-					{displayPreviousExerciseData("set1")}
-					{displayCurrentExerciseData("set1")}
-					{displayProgressIcons("set1")}
-				</div>
-				<div className="col-span-4 grid grid-cols-subgrid text-sm">
-					<div className="place-self-start pl-3">2</div>
-					{displayPreviousExerciseData("set2")}
-					{displayCurrentExerciseData("set2")}
-					{displayProgressIcons("set2")}
-				</div>
-				<div className="col-span-4 grid grid-cols-subgrid text-sm">
-					<div className="place-self-start pl-3">3</div>
-					{displayPreviousExerciseData("set3")}
-					{displayCurrentExerciseData("set3")}
-					{displayProgressIcons("set3")}
-				</div>
+				<ExerciseSets />
 			</div>
 		</div>
 	);

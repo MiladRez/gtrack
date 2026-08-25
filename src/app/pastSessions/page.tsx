@@ -94,7 +94,7 @@ export default function PastSessions() {
 		} else {
 			setSelectedDaySession(todaysSession[0]);
 		}
-	}, [currentDate]);
+	}, [currentDate, sessions]);
 
 	// Define modifiers: changes the colour of the calendar days to the respective exercise day
 	// Push: Orange

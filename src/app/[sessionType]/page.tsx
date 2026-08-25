@@ -107,12 +107,14 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 		const newMap = new Map(exerciseList);
 		newMap.delete(exerciseID.toString());
 		setExerciseList(newMap);
+		setDisplayExerciseList(newMap);
 	};
 
 	const deleteExerciseFromDB = (exerciseID: string) => {
 		const newMap = new Map(exerciseList);
 		newMap.delete(exerciseID.toString());
 		setExerciseList(newMap);
+		setDisplayExerciseList(newMap);
 		saveToDB(newMap); // save to DB
 	};
 
@@ -139,10 +141,6 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 			setOuterDialogOpen(true);
 		}
 	};
-
-	useEffectSkipFirstRender(() => {
-		setDisplayExerciseList(exerciseList);
-	}, [exerciseList]);
 
 	return (
 		<div className="w-screen flex justify-center">

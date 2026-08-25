@@ -64,7 +64,7 @@ export default function SessionDetails() {
 	console.log(exerciseList);
 
 	return (
-		<div className="max-w-(--breakpoint-md) flex flex-col items-center gap-6 mx-6">
+		<div className="max-w-(--breakpoint-md) flex flex-col items-center gap-6 mx-6 pb-6">
 			<Link href="/pastSessions" className="absolute top-3 left-5">
 				<Button variant="outline" size="icon" className="bg-slate-900 border-slate-700 mt-2 sm:mt-20">
 					<ChevronLeft />
