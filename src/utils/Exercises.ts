@@ -15,54 +15,66 @@ export const pushExercises: ExerciseItem[] = [
 	},
 	{
 		id: "3",
-		name: "Flat Bench Press",
-		type: "Bar",
+		name: "Incline Bench Press",
+		type: "Machine",
 		group: "Push"
 	},
 	{
 		id: "4",
 		name: "Flat Bench Press",
-		type: "Dumbbell",
+		type: "Bar",
 		group: "Push"
 	},
 	{
 		id: "5",
+		name: "Flat Bench Press",
+		type: "Dumbbell",
+		group: "Push"
+	},
+	{
+		id: "6",
 		name: "Machine Chest Press",
 		type: "Machine",
 		group: "Push"
 	},
 	{
-		id: "6",
+		id: "7",
 		name: "Chest Fly",
 		type: "Machine",
 		group: "Push"
 	},
 	{
-		id: "7",
+		id: "8",
+		name: "Cable Chest Fly",
+		type: "Machine",
+		group: "Push"
+	},
+	{
+		id: "9",
 		name: "Machine Shoulder Press",
 		type: "Machine",
 		group: "Push"
 	},
 	{
-		id: "8",
+		id: "10",
 		name: "Shoulder Lateral Raises",
 		type: "Dumbbell",
 		group: "Push"
 	},
 	{
-		id: "9",
+		id: "11",
 		name: "Tricep Pull Down",
 		type: "Machine",
 		group: "Push"
 	},
 	{
-		id: "10",
+		id: "12",
 		name: "Overhead Tricep Extension",
 		type: "Machine",
 		group: "Push"
 	},
 	{
-		id: "11",
+		id: "13",
 		name: "Dips",
 		type: "Machine",
 		group: "Push"
@@ -90,7 +102,7 @@ export const pullExercises: ExerciseItem[] = [
 	},
 	{
 		id: "4",
-		name: "Bent Over Row",
+		name: "T-bar Row",
 		type: "Bar",
 		group: "Pull"
 	},
@@ -110,6 +122,24 @@ export const pullExercises: ExerciseItem[] = [
 		id: "7",
 		name: "Seated Incline Bicep Curl",
 		type: "Dumbbell",
+		group: "Pull"
+	},
+	{
+		id: "8",
+		name: "Forearm Curl",
+		type: "Dumbbell",
+		group: "Pull"
+	},
+	{
+		id: "9",
+		name: "Cable Forearm Reverse Curl",
+		type: "Machine",
+		group: "Pull"
+	},
+	{
+		id: "10",
+		name: "Back Extension",
+		type: "Machine",
 		group: "Pull"
 	}
 ]
