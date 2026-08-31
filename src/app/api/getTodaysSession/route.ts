@@ -4,16 +4,6 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
 
-	const {searchParams} = new URL(request.url);
-	const exerciseType = searchParams.get("type");
-
-	if (!exerciseType) {
-		return NextResponse.json(
-			{error: "Missing type parameter"},
-			{status: 400}
-		)
-	}
-
 	// const today = new Date();
 	// console.log(today)
 	// today.setHours(today.getHours() - 4); // EST timezone
@@ -32,7 +22,6 @@ export async function GET(request: Request) {
 		const collection = db.collection("sessions")
 
 		const data = await collection.findOne({
-			type: exerciseType,
 			date: {$gte: dayStart, $lt: dayEnd}
 		});
 
