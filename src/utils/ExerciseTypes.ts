@@ -13,20 +13,17 @@ export type ExerciseData = {
 	}
 }
 
-export type Exercise = ExerciseItem & {
-	data: ExerciseData
-}
-
 export type ExerciseItem = {
 	id: string,
 	name: string,
 	type: "Dumbbell" | "Bar" | "Machine",
-	group: "Push" | "Pull" | "Legs"
+	group: "Push" | "Pull" | "Legs",
+	data?: ExerciseData
 }
 
 export type Session = {
 	_id: string,
 	type: string,
 	date: Date,
-	exerciseList: Map<string, Exercise>
+	exerciseList: Map<string, ExerciseItem>
 }

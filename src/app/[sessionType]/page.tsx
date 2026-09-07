@@ -3,7 +3,7 @@
 import {useEffect, useState, MouseEvent} from "react";
 import ExerciseCard from "@/components/custom/ExerciseCard";
 import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
-import {Exercise, ExerciseData, ExerciseItem} from "@/utils/ExerciseTypes";
+import {ExerciseData, ExerciseItem} from "@/utils/ExerciseTypes";
 import axios from "axios";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
@@ -18,7 +18,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 	const [sessionType, setSessionType] = useState("");
 	const [exerciseList, setExerciseList] = useState(new Map());
 	const [displayExerciseList, setDisplayExerciseList] = useState(new Map());
-	const [exercise, setExercise] = useState<Exercise | null>(null);
+	const [exercise, setExercise] = useState<ExerciseItem | null>(null);
 
 	const [outerDialogOpen, setOuterDialogOpen] = useState(false);
 	const [innerDialogOpen, setInnerDialogOpen] = useState(false);
@@ -65,7 +65,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 			// adds selected exercise from dropdown list to exerciseList list
 			setExerciseList(prevState => {
 				const newMap = new Map(prevState);
-				const exercise: Exercise = {
+				const exercise: ExerciseItem = {
 					...exerciseItem,
 					data: {
 						set1: {weight: 0, reps: 0},
@@ -118,7 +118,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 		saveToDB(newMap); // save to DB
 	};
 
-	const saveToDB = async (exerciseList: Map<Exercise["id"], Exercise>) => {
+	const saveToDB = async (exerciseList: Map<ExerciseItem["id"], ExerciseItem>) => {
 		await axios.post(
 			"/api/addSession",
 			{

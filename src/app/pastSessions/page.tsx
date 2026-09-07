@@ -2,7 +2,7 @@
 
 import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar";
-import {Exercise, Session} from "@/utils/ExerciseTypes";
+import {ExerciseItem, Session} from "@/utils/ExerciseTypes";
 import axios from "axios";
 import {ChevronLeft} from "lucide-react";
 import Link from "next/link";
@@ -79,7 +79,7 @@ export default function PastSessions() {
 		});		
 
 		if (todaysSession.length > 0) {
-			const exerciseListMap = new Map<string, Exercise>(Object.entries(todaysSession[0].exerciseList));
+			const exerciseListMap = new Map<string, ExerciseItem>(Object.entries(todaysSession[0].exerciseList));
 			const sessionDateFormat = new Date(todaysSession[0].date);
 			sessionDateFormat.setHours(sessionDateFormat.getHours()+4)
 
