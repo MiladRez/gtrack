@@ -4,13 +4,13 @@ import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIcon";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
-import {Exercise, Session} from "@/utils/ExerciseTypes";
+import {ExerciseItem, Session} from "@/utils/ExerciseTypes";
 import axios from "axios";
 import {ChevronLeft} from "lucide-react";
 import Link from "next/link";
 import {useParams} from "next/navigation";
 import {useEffect, useState} from "react";
-import ExerciseIcon from "../../../components/custom/ExerciseIcon";
+import ExerciseIcon from "../../../../components/custom/ExerciseIcon";
 
 export default function SessionDetails() {
 	const params = useParams(); // params is a promise
@@ -21,7 +21,7 @@ export default function SessionDetails() {
 	const [dateString, setDateString] = useState<string>("");
 	const [timeString, setTimeString] = useState<string>("");
 
-	const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
+	const [exerciseList, setExerciseList] = useState<ExerciseItem[]>([]);
 
 	useEffect(() => {
 		async function unwrapParams() {

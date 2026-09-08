@@ -1,13 +1,14 @@
-import {Exercise, ExerciseData, Session} from "@/utils/ExerciseTypes";
+import {ExerciseItem, ExerciseData, Session} from "@/utils/ExerciseTypes";
 import ExerciseIcon from "./ExerciseIcon";
 import ProgressIcons from "./ProgressIcons";
 import {DialogTrigger, Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogOverlay} from "../ui/dialog";
 import {Button} from "../ui/button";
 import {MouseEvent, useEffect, useState} from "react";
 import axios from "axios";
+import {useQuery} from "@tanstack/react-query";
 
 type ExerciseCardProps = {
-	exercise: Exercise;
+	exercise: ExerciseItem;
 	deleteExerciseFromDB: (exerciseID: string) => void;
 	innerDialogOpen: boolean;
 	setInnerDialogOpen: (open: boolean) => void;
@@ -20,24 +21,40 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 
 	const numOfSets = 3;
 
-	useEffect(() => {
-		const getSessions = async () => {
-			try {
-				const response = await axios.get("/api/getSessions");
+	// data is cached sessions
+	const {data, isLoading} = useQuery({
+		queryKey: ["sessions"],
+		queryFn: () => axios.get("/api/getSessions").then(res => res.data),
+		staleTime: 0,
+	});
 
-				const data = await response.data;
-				if (data) {
-					for (let i = 0; i < data.length; i++) {
-						data[i].exerciseList = new Map(Object.entries(data[i].exerciseList)); // API response is JSON, so we need to convert exerciseList to Map
-					}
-					setSessions(data);
-				}
-			} catch (error) {
-				console.error("Error fetching today's session: ", error);
+	// useEffect(() => {
+	// 	const getSessions = async () => {
+	// 		try {
+	// 			const response = await axios.get("/api/getSessions");
+
+	// 			const data = await response.data;
+	// 			if (data) {
+	// 				for (let i = 0; i < data.length; i++) {
+	// 					data[i].exerciseList = new Map(Object.entries(data[i].exerciseList)); // API response is JSON, so we need to convert exerciseList to Map
+	// 				}
+	// 				setSessions(data);
+	// 			}
+	// 		} catch (error) {
+	// 			console.error("Error fetching today's session: ", error);
+	// 		}
+	// 	};
+	// 	getSessions();
+	// }, []);
+
+	useEffect(() => {
+		if (!isLoading) {
+			for (let i = 0; i < data.length; i++) {
+				data[i].exerciseList = new Map(Object.entries(data[i].exerciseList)); // API response is JSON, so we need to convert exerciseList to Map
 			}
-		};
-		getSessions();
-	}, []);
+			setSessions(data)
+		}
+	}, [data])
 
 	useEffect(() => {
 		if (sessions) {

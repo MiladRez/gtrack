@@ -1,8 +1,8 @@
-import {Exercise} from "@/utils/ExerciseTypes"
+import {ExerciseItem} from "@/utils/ExerciseTypes"
 
-export default function SessionTable({session}: {session: {_id: string, type: string, date: Date, exerciseList: Map<string, Exercise>}}) {
+export default function SessionTable({session}: {session: {_id: string, type: string, date: Date, exerciseList: Map<string, ExerciseItem>}}) {
 
-	const exerciseList = new Map<string, Exercise>(Object.entries(session.exerciseList));
+	const exerciseList = new Map<string, ExerciseItem>(Object.entries(session.exerciseList));
 	
 	const exercisesData = [];
 

@@ -31,7 +31,7 @@ export default function Home() {
 							Legs
 						</Button>
 					</Link>
-					<Link href="/pastSessions" className="sm:w-1/4 mt-12">
+					<Link href="/pages/pastSessions" className="sm:w-1/4 mt-12">
 						<Button variant="outline" className="px-4 py-6 bg-app-primary w-full">
 							Past Sessions
 						</Button>

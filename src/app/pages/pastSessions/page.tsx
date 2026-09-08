@@ -7,7 +7,7 @@ import axios from "axios";
 import {ChevronLeft} from "lucide-react";
 import Link from "next/link";
 import {useEffect, useState} from "react";
-import "../../styles/calendar.css"
+import "../../../styles/calendar.css"
 import {ModifiersClassNames} from "react-day-picker";
 import {isToday} from "date-fns";
 import {useQuery} from "@tanstack/react-query";
@@ -28,7 +28,7 @@ export default function PastSessions() {
 	const {data, isLoading} = useQuery({
 		queryKey: ["sessions"],
 		queryFn: () => axios.get("/api/getSessions").then(res => res.data),
-		staleTime: 10_000
+		staleTime: 0
 	});
 
 	useEffect(() => {
@@ -136,12 +136,12 @@ export default function PastSessions() {
 
 		console.log(date)
 		
-		let linkHref = `/pastSessions/${_id}`
+		let linkHref = `/pages/pastSessions/${_id}`
 		const todayDate = new Date();
 		if (date.getFullYear() === todayDate?.getFullYear() &&
 			date.getMonth() === todayDate.getMonth() &&
 			date.getDate() === todayDate.getDate()) {
-			linkHref = `/${type.toLowerCase()}`
+			linkHref = `/pages/${type.toLowerCase()}`
 		}
 
 		return (

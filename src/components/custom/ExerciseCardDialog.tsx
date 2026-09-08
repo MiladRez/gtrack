@@ -2,10 +2,10 @@ import {useCallback, useState} from "react";
 import ExerciseCardInput from "./ExerciseCardInput";
 import debounce from "lodash.debounce";
 import {Separator} from "../ui/separator";
-import {Exercise, ExerciseData} from "@/utils/ExerciseTypes";
+import {ExerciseItem, ExerciseData} from "@/utils/ExerciseTypes";
 
 type ExerciseCardDialogProps = {
-	exercise: Exercise | null,
+	exercise: ExerciseItem | null,
 	handleUpdateExerciseData: (data: ExerciseData) => void
 }
 

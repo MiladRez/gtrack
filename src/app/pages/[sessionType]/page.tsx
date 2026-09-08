@@ -168,7 +168,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 							<ChevronLeft />
 						</Button>
 					</Link>
-					<Link href="/pastSessions" className="sm:hidden">
+					<Link href="/pages/pastSessions" className="sm:hidden">
 						<Button variant="ghost" className="underline px-0">
 							Past Sessions
 						</Button>

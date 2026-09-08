@@ -1,4 +1,4 @@
-import {Exercise, ExerciseData, ExerciseItem} from "@/utils/ExerciseTypes";
+import {ExerciseData, ExerciseItem} from "@/utils/ExerciseTypes";
 import {Button} from "../ui/button";
 import {Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger} from "../ui/dialog";
 import {FieldGroup} from "../ui/field";
@@ -7,8 +7,8 @@ import ExerciseCardDialog from "./ExerciseCardDialog";
 import {useState} from "react";
 
 type ExerciseDialogProps = {
-	exercise: Exercise;
-	exerciseList: Map<string, Exercise>;
+	exercise: ExerciseItem;
+	exerciseList: Map<string, ExerciseItem>;
 	updateExerciseList: (exerciseID: string, data: ExerciseData) => void;
 	removeExercise?: (exerciseID: string) => void;
 	setOuterDialogOpen?: (open: boolean) => void;
