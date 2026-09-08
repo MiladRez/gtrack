@@ -16,17 +16,17 @@ export default function Home() {
 					/>
 				</h1>
 				<div className="flex flex-col items-center w-full max-w-(--breakpoint-md) gap-8">
-					<Link href="/push" className="w-1/4">
+					<Link href="/pages/push" className="w-1/4">
 						<Button variant="outline" className="px-4 py-6 bg-app-primary w-full">
 							Push
 						</Button>
 					</Link>
-					<Link href="/pull" className="w-1/4">
+					<Link href="/pages/pull" className="w-1/4">
 						<Button variant="outline" className="px-4 py-6 bg-app-primary w-full">
 							Pull
 						</Button>
 					</Link>
-					<Link href="/legs" className="w-1/4">
+					<Link href="/pages/legs" className="w-1/4">
 						<Button variant="outline" className="px-4 py-6 bg-app-primary w-full">
 							Legs
 						</Button>

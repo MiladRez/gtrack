@@ -3,6 +3,7 @@ import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import {ClerkProvider, Show, SignInButton, SignUpButton, UserButton} from "@clerk/nextjs";
 import Image from "next/image";
+import { Providers } from "./providers";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -50,7 +51,9 @@ export default function RootLayout({
 								<div className="self-center mt-6 z-10">
 									<UserButton />
 								</div>
-								{children}
+								<Providers>
+									{children}
+								</Providers>
 							</div>
 						</Show>
 					</header>

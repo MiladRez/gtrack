@@ -13,8 +13,11 @@ import {Dialog, DialogTrigger} from "@/components/ui/dialog";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIcon";
 import {legsExercises, pullExercises, pushExercises} from "@/utils/Exercises";
+import {QueryClient, useMutation} from "@tanstack/react-query";
 
 export default function TodaysSessionPage({params}: {params: {sessionType: string}}) {
+	const [queryClient] = useState(() => new QueryClient());
+
 	const [sessionType, setSessionType] = useState("");
 	const [exerciseList, setExerciseList] = useState(new Map());
 	const [displayExerciseList, setDisplayExerciseList] = useState(new Map());
@@ -100,7 +103,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 		newMap.set(exerciseID, exercise);
 		setExerciseList(newMap);
 		setDisplayExerciseList(newMap);
-		saveToDB(newMap); // save to DB
+		saveToDB.mutate(newMap);
 	};
 
 	const removeExercise = (exerciseID: string) => {
@@ -115,23 +118,37 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 		newMap.delete(exerciseID.toString());
 		setExerciseList(newMap);
 		setDisplayExerciseList(newMap);
-		saveToDB(newMap); // save to DB
+		saveToDB.mutate(newMap);
 	};
 
-	const saveToDB = async (exerciseList: Map<ExerciseItem["id"], ExerciseItem>) => {
-		await axios.post(
-			"/api/addSession",
-			{
-				type: sessionType,
-				exerciseList: Object.fromEntries(exerciseList)
-			},
-			{
-				headers: {
-					"Content-Type": "application/json"
+	const saveToDB = useMutation({
+		mutationFn: (exerciseList: Map<ExerciseItem["id"], ExerciseItem>) => (
+			axios.post(
+				"/api/addSession",
+				{
+					type: sessionType,
+					exerciseList: Object.fromEntries(exerciseList)
+				},
+				{
+					headers: {
+						"Content-Type": "application/json"
+					}
 				}
-			}
-		);
-	};
+			)
+		).then(res => res.data),
+		onSuccess: (newSet) => {
+			queryClient.setQueryData(["session"], (old: any) => {
+				if (!old) return old; // safety check: if cache is empty/loading dont try to modify it, just leave it
+				
+				return old.map((session: any) => session["_id"] === newSet["_id"] ? {
+					...session,
+					exerciseList: newSet.exerciseList
+				}
+					: session
+				);
+			});
+		}
+	})
 
 	const handleExerciseCardOnClick = (e: MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();

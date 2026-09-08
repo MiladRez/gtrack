@@ -10,6 +10,7 @@ import {useEffect, useState} from "react";
 import "../../styles/calendar.css"
 import {ModifiersClassNames} from "react-day-picker";
 import {isToday} from "date-fns";
+import {useQuery} from "@tanstack/react-query";
 
 export default function PastSessions() {
 
@@ -23,21 +24,21 @@ export default function PastSessions() {
 	
 	const [currentDate, setCurrentDate] = useState<Date | undefined>(new Date());
 
-	useEffect(() => {
-		const getSessions = async () => {
-			try {
-				const response = await axios.get("/api/getSessions");
+	// data is cached sessions
+	const {data, isLoading} = useQuery({
+		queryKey: ["sessions"],
+		queryFn: () => axios.get("/api/getSessions").then(res => res.data),
+		staleTime: 10_000
+	});
 
-				const data = await response.data;
-				if (data) {
-					setSessions(data);
-				}
-			} catch (error) {
-				console.error("Error fetching today's session: ", error);
-			}
-		};
-		getSessions();
-	}, []);
+	useEffect(() => {
+		if (isLoading) {
+			console.log("loaded: ", data)
+		} else {
+			setSessions(data)
+			console.log("unloaded: ", data.slice(-5))
+		}
+	}, [data]);
 
 	useEffect(() => {
 		const sessionsList = [
