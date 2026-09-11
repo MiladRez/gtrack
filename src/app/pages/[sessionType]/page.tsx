@@ -3,7 +3,7 @@
 import {useEffect, useState, MouseEvent} from "react";
 import ExerciseCard from "@/components/custom/ExerciseCard";
 import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
-import {ExerciseData, ExerciseItem} from "@/utils/ExerciseTypes";
+import {ExerciseData, ExerciseItem, Session} from "@/utils/ExerciseTypes";
 import axios from "axios";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
@@ -13,14 +13,15 @@ import {Dialog, DialogTrigger} from "@/components/ui/dialog";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIcon";
 import {legsExercises, pullExercises, pushExercises} from "@/utils/Exercises";
-import {QueryClient, useMutation} from "@tanstack/react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 
 export default function TodaysSessionPage({params}: {params: {sessionType: string}}) {
-	const [queryClient] = useState(() => new QueryClient());
+	const queryClient = useQueryClient();
 
-	const [sessionType, setSessionType] = useState("");
-	const [exerciseList, setExerciseList] = useState(new Map());
-	const [displayExerciseList, setDisplayExerciseList] = useState(new Map());
+	const [sessionType, setSessionType] = useState<Session["type"]>("");
+	const [sessionID, setSessionID] = useState<Session["_id"]>("");
+	const [exerciseList, setExerciseList] = useState<Session["exerciseList"]>({});
+	const [displayExerciseList, setDisplayExerciseList] = useState<Session["exerciseList"]>({});
 	const [exercise, setExercise] = useState<ExerciseItem | null>(null);
 
 	const [outerDialogOpen, setOuterDialogOpen] = useState(false);
@@ -47,9 +48,9 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 
 				const data = await response.data;
 				if (data) {
-					const dataMap = new Map(Object.entries(data.exerciseList)); // API response returns object, convert object to Map
-					setExerciseList(new Map(dataMap));
-					setDisplayExerciseList(new Map(dataMap));
+					setSessionID(data._id);
+					setExerciseList(data.exerciseList);
+					setDisplayExerciseList(data.exerciseList);
 				}
 			} catch (error) {
 				console.error("Error fetching today's session: ", error);
@@ -62,12 +63,12 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 
 	const handleAddExercise = (exerciseItem: ExerciseItem) => {
 		// check if exercise already in exerciseList list
-		if (exerciseList.get(exerciseItem.id)) {
+		if (exerciseList[exerciseItem.id]) {
 			console.log("Exercise already added.");
 		} else {
 			// adds selected exercise from dropdown list to exerciseList list
 			setExerciseList(prevState => {
-				const newMap = new Map(prevState);
+				const newExerciseList = {...prevState};
 				const exercise: ExerciseItem = {
 					...exerciseItem,
 					data: {
@@ -76,9 +77,9 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 						set3: {weight: 0, reps: 0}
 					}
 				};
-				newMap.set(exercise.id, exercise);
+				newExerciseList[exercise.id] = exercise;
 				setExercise(exercise);
-				return newMap;
+				return newExerciseList;
 			});
 		}
 	};
@@ -97,37 +98,46 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 	};
 
 	const updateExerciseList = (exerciseID: string, data: ExerciseData) => {
-		const newMap = new Map(exerciseList);
-		const exercise = newMap.get(exerciseID);
-		exercise.data = data;
-		newMap.set(exerciseID, exercise);
-		setExerciseList(newMap);
-		setDisplayExerciseList(newMap);
-		saveToDB.mutate(newMap);
+		const newExerciseList = {
+			...exerciseList,
+			[exerciseID]: {
+				...exerciseList[exerciseID],
+				data
+			}
+		}
+		setExerciseList(newExerciseList);
+		setDisplayExerciseList(newExerciseList);
+		saveToDB.mutate(newExerciseList);
 	};
 
+	// removes exercise from exerciseList
 	const removeExercise = (exerciseID: string) => {
-		const newMap = new Map(exerciseList);
-		newMap.delete(exerciseID.toString());
-		setExerciseList(newMap);
-		setDisplayExerciseList(newMap);
+		const newExerciseList = {...exerciseList};
+		delete newExerciseList[exerciseID];
+		setExerciseList(newExerciseList);
+		setDisplayExerciseList(newExerciseList);
+		return newExerciseList;
 	};
 
+	// actually makes the call to delete it from db
 	const deleteExerciseFromDB = (exerciseID: string) => {
-		const newMap = new Map(exerciseList);
-		newMap.delete(exerciseID.toString());
-		setExerciseList(newMap);
-		setDisplayExerciseList(newMap);
-		saveToDB.mutate(newMap);
+		const newExerciseList = removeExercise(exerciseID);
+		if (Object.keys(newExerciseList).length === 0) {
+			deleteFromDB.mutate(sessionID)
+		} else {
+			saveToDB.mutate(newExerciseList);
+		}
+		
 	};
 
 	const saveToDB = useMutation({
-		mutationFn: (exerciseList: Map<ExerciseItem["id"], ExerciseItem>) => (
+		mutationFn: (exerciseList: Session["exerciseList"]) => (
 			axios.post(
-				"/api/addSession",
+				"/api/addExercise",
 				{
+					_id: sessionID,
 					type: sessionType,
-					exerciseList: Object.fromEntries(exerciseList)
+					exerciseList: exerciseList
 				},
 				{
 					headers: {
@@ -137,18 +147,50 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 			)
 		).then(res => res.data),
 		onSuccess: (newSet) => {
-			queryClient.setQueryData(["session"], (old: any) => {
+			queryClient.setQueryData(["sessions"], (old: Session[]) => {
 				if (!old) return old; // safety check: if cache is empty/loading dont try to modify it, just leave it
-				
-				return old.map((session: any) => session["_id"] === newSet["_id"] ? {
-					...session,
-					exerciseList: newSet.exerciseList
-				}
-					: session
-				);
+
+				console.log("looking for _id:", newSet["_id"]);
+
+				const exists = old.some((session: Session) => session["_id"] === newSet["_id"]);
+
+				if (exists) {
+					return old.map((session: Session) => session["_id"] === newSet["_id"] ? {
+						...session,
+						exerciseList: newSet.exerciseList
+					}
+						: session
+					);
+				} else {
+					setSessionID(newSet["_id"]);
+					return [...old, newSet];
+				}				
 			});
 		}
 	})
+
+	const deleteFromDB = useMutation({
+		mutationFn: (sessionID: Session["_id"]) => (
+			axios.post(
+				"/api/deleteExercise",
+				{
+					_id: sessionID
+				},
+				{
+					headers: {
+						"Content-Type": "application/json"
+					}
+				}
+			)
+		).then(res => res.data),
+		onSuccess: (deletedSession) => {
+			queryClient.setQueryData(["sessions"], (old: Session[]) => {
+				if (!old) return old;
+
+				return old.filter((session: Session) => session["_id"] !== deletedSession["_id"]);
+			});
+		}
+	});
 
 	const handleExerciseCardOnClick = (e: MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
@@ -180,7 +222,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 						<DropdownMenuTrigger className="px-6 py-4 bg-slate-900 border border-slate-700 rounded-lg sm:mt-20">Add Exercise</DropdownMenuTrigger>
 						<DropdownMenuContent>
 							{getSessionExercises(sessionType)
-								.filter(excer => !exerciseList.get(excer.id))
+								.filter(excer => !exerciseList[excer.id])
 								.map(exercise => (
 									<DialogTrigger key={exercise.id} className="w-full flex">
 										<DropdownMenuItem className="w-full flex justify-between" onClick={() => handleAddExercise(exercise)}>
@@ -194,7 +236,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 					{exercise ? <ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} /> : null}
 				</Dialog>
 				<div className="w-full flex flex-col gap-10 mb-10">
-					{Array.from(displayExerciseList).map(exercise => (
+					{Object.entries(displayExerciseList).map(exercise => (
 						<Dialog key={exercise[0]} open={outerDialogOpen}>
 							<div className="w-full md:w-1/2" onClick={e => handleExerciseCardOnClick(e)}>
 								<ExerciseCard exercise={exercise[1]} deleteExerciseFromDB={deleteExerciseFromDB} innerDialogOpen={innerDialogOpen} setInnerDialogOpen={setInnerDialogOpen} />

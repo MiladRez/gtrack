@@ -49,9 +49,6 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 
 	useEffect(() => {
 		if (!isLoading) {
-			for (let i = 0; i < data.length; i++) {
-				data[i].exerciseList = new Map(Object.entries(data[i].exerciseList)); // API response is JSON, so we need to convert exerciseList to Map
-			}
 			setSessions(data)
 		}
 	}, [data])
@@ -70,8 +67,8 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 
 	useEffect(() => {
 		// check if prevSession exists and if this specific exercise exists in the previous session
-		if (prevSession && prevSession.exerciseList.get(exercise.id)) {
-			setPrevSessionData(prevSession.exerciseList.get(exercise.id)?.data)
+		if (prevSession && prevSession.exerciseList[exercise.id]) {
+			setPrevSessionData(prevSession.exerciseList[exercise.id]?.data)
 		}
 	}, [prevSession])
 

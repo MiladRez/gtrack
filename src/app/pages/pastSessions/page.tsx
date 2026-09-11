@@ -2,7 +2,7 @@
 
 import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar";
-import {ExerciseItem, Session} from "@/utils/ExerciseTypes";
+import {Session} from "@/utils/ExerciseTypes";
 import axios from "axios";
 import {ChevronLeft} from "lucide-react";
 import Link from "next/link";
@@ -27,8 +27,8 @@ export default function PastSessions() {
 	// data is cached sessions
 	const {data, isLoading} = useQuery({
 		queryKey: ["sessions"],
-		queryFn: () => axios.get("/api/getSessions").then(res => res.data),
-		staleTime: 0
+		queryFn: () => axios.get("/api/getSessions").then(res => {console.log("from db: ", typeof(res.data.slice(-5)[0].exerciseList));return res.data}),
+		staleTime: 10_000
 	});
 
 	useEffect(() => {
@@ -80,7 +80,7 @@ export default function PastSessions() {
 		});		
 
 		if (todaysSession.length > 0) {
-			const exerciseListMap = new Map<string, ExerciseItem>(Object.entries(todaysSession[0].exerciseList));
+			const exerciseListMap = todaysSession[0].exerciseList;
 			const sessionDateFormat = new Date(todaysSession[0].date);
 			sessionDateFormat.setHours(sessionDateFormat.getHours()+4)
 
@@ -134,7 +134,7 @@ export default function PastSessions() {
 			}
 		}
 
-		console.log(date)
+		// console.log(date)
 		
 		let linkHref = `/pages/pastSessions/${_id}`
 		const todayDate = new Date();
@@ -150,7 +150,7 @@ export default function PastSessions() {
 					<div className="w-full flex flex-col">
 						<h2>{type}</h2>
 						<p className="text-[0.7rem] sm:text-xs italic text-gray-700">
-							{exerciseList.size} exercise(s)
+							{Object.keys(exerciseList).length} exercise(s)
 						</p>
 					</div>
 					<div className="flex flex-col items-end">

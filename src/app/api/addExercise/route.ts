@@ -1,4 +1,5 @@
 import clientPromise from "@/libs/mongodb";
+import {ObjectId} from "mongodb";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -10,11 +11,11 @@ export async function POST(request: Request) {
 	// const tomorrow = new Date();
 	// tomorrow.setDate(10);
 
-	const dayStart = new Date();
-	dayStart.setHours(0 - timezoneDiff, 0, 0, 0);
+	// const dayStart = new Date();
+	// dayStart.setHours(0 - timezoneDiff, 0, 0, 0);
 
-	const dayEnd = new Date();
-	dayEnd.setHours(23 - timezoneDiff, 59, 59, 999);
+	// const dayEnd = new Date();
+	// dayEnd.setHours(23 - timezoneDiff, 59, 59, 999);
 
 	try {
 		const client = await clientPromise;
@@ -23,22 +24,21 @@ export async function POST(request: Request) {
 
 		const body = await request.json();
 
-		const {type, exerciseList} = body;
+		const {_id, type, exerciseList} = body;
 		
 		let result;
 
-		// update if already exists, create new if doesnt, delete if exerciseList is empty
-		if (Object.keys(exerciseList).length !== 0) {
-			result = await collection.updateOne(
-				{ type: type, date: { $gte: dayStart, $lt: dayEnd } }, // find doc by type and within today's date range
+		// update if already exists, create new if doesnt
+		if (_id !== "") {
+			result = await collection.findOneAndUpdate(
+				{ _id: ObjectId.createFromHexString(_id) }, // find doc by session id
 				{ $set: { exerciseList: exerciseList, date: today } }, // update exercise object
-				{ upsert: true } // if doc doesn't exist, create new one
+				{ returnDocument: "after" } // return doc after its been updated
 			);
 		} else {
-			result = await collection.deleteOne({
-				type: type,
-				date: { $gte: dayStart, $lt: dayEnd }
-			});
+			const doc = { type, exerciseList, date: today }
+			const newSession = await collection.insertOne(doc);
+			result = { _id: newSession.insertedId, ...doc }
 		}
 
 		return NextResponse.json(result, {status: 200});

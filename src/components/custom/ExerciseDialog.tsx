@@ -1,4 +1,4 @@
-import {ExerciseData, ExerciseItem} from "@/utils/ExerciseTypes";
+import {ExerciseData, ExerciseItem, Session} from "@/utils/ExerciseTypes";
 import {Button} from "../ui/button";
 import {Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger} from "../ui/dialog";
 import {FieldGroup} from "../ui/field";
@@ -8,7 +8,7 @@ import {useState} from "react";
 
 type ExerciseDialogProps = {
 	exercise: ExerciseItem;
-	exerciseList: Map<string, ExerciseItem>;
+	exerciseList: Session["exerciseList"];
 	updateExerciseList: (exerciseID: string, data: ExerciseData) => void;
 	removeExercise?: (exerciseID: string) => void;
 	setOuterDialogOpen?: (open: boolean) => void;

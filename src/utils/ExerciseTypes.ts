@@ -25,5 +25,5 @@ export type Session = {
 	_id: string,
 	type: string,
 	date: Date,
-	exerciseList: Map<string, ExerciseItem>
+	exerciseList: Record<string, ExerciseItem>
 }
