@@ -47,9 +47,9 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, hand
 	}, [finalValue]);
 
 	return (
-		<div className="flex flex-col gap-1">
+		<div className="col-span-2 flex justify-between bg-[#242731] rounded-xl">
 			<input
-				className="max-w-14 text-center text-lg text-white border border-slate-800 rounded bg-slate-950 py-1"
+				className="max-w-14 text-lg text-white rounded px-3 py-3"
 				placeholder="0"
 				value={displayValues[setString][entryType]}
 				onFocus={handleInputOnFocus}
@@ -60,7 +60,7 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, hand
 				pattern="[0-9]*"
 				inputMode="numeric"
 			/>
-			<label className="self-center uppercase text-xs">{entryType === "weight" ? "lbs" : "reps"}</label>
+			<label className="px-3 self-center uppercase text-tiny text-[#a4a7b0]">{entryType === "weight" ? "lbs" : "reps"}</label>
 		</div>
 	)
 }

@@ -57,6 +57,8 @@
   --color-app-tertiary: hsl(221.54, 11.11%, 54.12%);
 
   --color-highlight: hsl(210, 96.08%, 40%);
+
+  --text-tiny: 0.625rem;
 }
 
 /*

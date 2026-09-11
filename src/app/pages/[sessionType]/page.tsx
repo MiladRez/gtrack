@@ -12,7 +12,7 @@ import ExerciseDialog from "@/components/custom/ExerciseDialog";
 import {Dialog, DialogTrigger} from "@/components/ui/dialog";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIcon";
-import {legsExercises, pullExercises, pushExercises} from "@/utils/Exercises";
+import {pushExercisesList, pullExercisesList, legExercisesList} from "@/utils/Exercises";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 
 export default function TodaysSessionPage({params}: {params: {sessionType: string}}) {
@@ -39,6 +39,8 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 		getSessionType();
 	}, []);
 
+
+	//TODO - could use session id here, but not sure if I want to
 	useEffect(() => {
 		const getTodaysSession = async () => {
 			try {
@@ -87,22 +89,23 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 	const getSessionExercises = (sessionType: string) => {
 		switch (sessionType) {
 			case "Push":
-				return pushExercises;
+				return pushExercisesList;
 			case "Pull":
-				return pullExercises;
+				return pullExercisesList;
 			case "Legs":
-				return legsExercises;
+				return legExercisesList;
 			default:
-				return pushExercises;
+				return pushExercisesList;
 		}
 	};
 
-	const updateExerciseList = (exerciseID: string, data: ExerciseData) => {
+	const updateExerciseList = (exerciseID: string, data: ExerciseItem["data"], method: ExerciseItem["method"]) => {
 		const newExerciseList = {
 			...exerciseList,
 			[exerciseID]: {
 				...exerciseList[exerciseID],
-				data
+				data,
+				method
 			}
 		}
 		setExerciseList(newExerciseList);
@@ -227,7 +230,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 									<DialogTrigger key={exercise.id} className="w-full flex">
 										<DropdownMenuItem className="w-full flex justify-between" onClick={() => handleAddExercise(exercise)}>
 											{exercise.name}
-											<ExerciseIconDropdownMenu type={exercise.type} />
+											<ExerciseIconDropdownMenu method={exercise.method} />
 										</DropdownMenuItem>
 									</DialogTrigger>
 								))}

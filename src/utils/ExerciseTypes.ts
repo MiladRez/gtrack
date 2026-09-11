@@ -16,9 +16,9 @@ export type ExerciseData = {
 export type ExerciseItem = {
 	id: string,
 	name: string,
-	type: "Dumbbell" | "Bar" | "Machine",
+	method: "Dumbbells" | "Machine" | "Barbell" | "Cable",
 	group: "Push" | "Pull" | "Legs",
-	data: ExerciseData
+	data: ExerciseData | undefined
 }
 
 export type Session = {

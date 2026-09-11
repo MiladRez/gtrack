@@ -15,62 +15,30 @@ type ExerciseCardProps = {
 };
 
 export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialogOpen, setInnerDialogOpen}: ExerciseCardProps) {
-	const [sessions, setSessions] = useState<Session[]>([]);
-	const [prevSession, setPrevSession] = useState<Session | null>(null);
 	const [prevSessionData, setPrevSessionData] = useState<ExerciseData>();
 
 	const numOfSets = 3;
 
-	// data is cached sessions
-	const {data, isLoading} = useQuery({
-		queryKey: ["sessions"],
-		queryFn: () => axios.get("/api/getSessions").then(res => res.data),
-		staleTime: 0,
-	});
-
-	// useEffect(() => {
-	// 	const getSessions = async () => {
-	// 		try {
-	// 			const response = await axios.get("/api/getSessions");
-
-	// 			const data = await response.data;
-	// 			if (data) {
-	// 				for (let i = 0; i < data.length; i++) {
-	// 					data[i].exerciseList = new Map(Object.entries(data[i].exerciseList)); // API response is JSON, so we need to convert exerciseList to Map
-	// 				}
-	// 				setSessions(data);
-	// 			}
-	// 		} catch (error) {
-	// 			console.error("Error fetching today's session: ", error);
-	// 		}
-	// 	};
-	// 	getSessions();
-	// }, []);
-
 	useEffect(() => {
-		if (!isLoading) {
-			setSessions(data)
-		}
-	}, [data])
+		const getPrevExerciseData = async () => {
+			try {
+				const response = await axios.get("/api/getPrevExerciseData", {
+					params: {
+						exerciseID: exercise.id,
+						type: exercise.group
+					}
+				});
 
-	useEffect(() => {
-		if (sessions) {
-			const typeSessions = sessions.filter(session => session.type === exercise.group);
-			if (typeSessions.length > 1) {
-				const previousSession = typeSessions.slice(0, -1).reduce((latest, current) => {
-					return current.date > latest.date ? current : latest;
-				}, sessions[1]);
-				setPrevSession(previousSession);
+				const data = await response.data;
+				if (data) {
+					setPrevSessionData(data);
+				}
+			} catch (error) {
+				console.error("Error fetching today's session: ", error);
 			}
-		}
-	}, [sessions]);
-
-	useEffect(() => {
-		// check if prevSession exists and if this specific exercise exists in the previous session
-		if (prevSession && prevSession.exerciseList[exercise.id]) {
-			setPrevSessionData(prevSession.exerciseList[exercise.id]?.data)
-		}
-	}, [prevSession])
+		};
+		getPrevExerciseData();
+	}, [exercise]);
 
 	const handleCrossOnClick = (e: MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
@@ -110,12 +78,12 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 	const ExerciseSets = () => {
 
 		const displayCurrentExerciseData = (set: string) => {
-			if (exercise.data[set as keyof ExerciseData].weight == 0 || exercise.data[set as keyof ExerciseData].reps == 0) {
+			if (exercise.data?.[set as keyof ExerciseData].weight == 0 || exercise.data?.[set as keyof ExerciseData].reps == 0) {
 				return <div className="text-muted-foreground place-self-start">-</div>;
 			} else {
 				return (
 					<div className="place-self-start">
-						{exercise.data[set as keyof ExerciseData].weight} lbs x {exercise.data[set as keyof ExerciseData].reps}
+						{exercise.data?.[set as keyof ExerciseData].weight} lbs x {exercise.data?.[set as keyof ExerciseData].reps}
 					</div>
 				);
 			}
@@ -134,12 +102,15 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 		};
 
 		const displayProgressIcons = (set: string) => {
+			let currVolume = 0
 			let prevVolume = 0;
 			if (prevSessionData) {
-				prevVolume = prevSessionData?.[set as keyof ExerciseData].weight * prevSessionData[set as keyof ExerciseData].reps;
+				prevVolume = prevSessionData[set as keyof ExerciseData].weight * prevSessionData[set as keyof ExerciseData].reps;
 			}
 
-			const currVolume = exercise.data[set as keyof ExerciseData].weight * exercise.data[set as keyof ExerciseData].reps;
+			if (exercise.data) {
+				currVolume = exercise.data?.[set as keyof ExerciseData].weight * exercise.data?.[set as keyof ExerciseData].reps;
+			}
 
 			if (prevVolume < currVolume) {
 				return (
@@ -184,7 +155,7 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 			<div className="flex justify-between">
 				<div className="flex gap-4">
 					<div className="border border-app-primary-border rounded-md px-2 py-2">
-						<ExerciseIcon type={exercise.type} color="white" />
+						<ExerciseIcon method={exercise.method} color="white" />
 					</div>
 					<div className="mt-1 text-highlight">{exercise.name}</div>
 				</div>
