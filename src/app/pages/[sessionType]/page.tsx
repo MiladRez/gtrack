@@ -11,7 +11,7 @@ import {ChevronLeft} from "lucide-react";
 import ExerciseDialog from "@/components/custom/ExerciseDialog";
 import {Dialog, DialogTrigger} from "@/components/ui/dialog";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIcon";
+import ExerciseIcon from "@/components/custom/ExerciseIcon";
 import {pushExercisesList, pullExercisesList, legExercisesList} from "@/utils/Exercises";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 
@@ -23,9 +23,6 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 	const [exerciseList, setExerciseList] = useState<Session["exerciseList"]>({});
 	const [displayExerciseList, setDisplayExerciseList] = useState<Session["exerciseList"]>({});
 	const [exercise, setExercise] = useState<ExerciseItem | null>(null);
-
-	const [outerDialogOpen, setOuterDialogOpen] = useState(false);
-	const [innerDialogOpen, setInnerDialogOpen] = useState(false);
 
 	useEffect(() => {
 		const getSessionType = async () => {
@@ -195,15 +192,6 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 		}
 	});
 
-	const handleExerciseCardOnClick = (e: MouseEvent<HTMLDivElement>) => {
-		e.stopPropagation();
-		if (innerDialogOpen) {
-			setOuterDialogOpen(false);
-		} else {
-			setOuterDialogOpen(true);
-		}
-	};
-
 	return (
 		<div className="w-screen flex justify-center">
 			<div className="max-w-(--breakpoint-md) w-full flex flex-col items-center gap-12 mx-4">
@@ -230,7 +218,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 									<DialogTrigger key={exercise.id} className="w-full flex">
 										<DropdownMenuItem className="w-full flex justify-between" onClick={() => handleAddExercise(exercise)}>
 											{exercise.name}
-											<ExerciseIconDropdownMenu method={exercise.method} />
+											<ExerciseIcon method={exercise.method} />
 										</DropdownMenuItem>
 									</DialogTrigger>
 								))}
@@ -239,13 +227,14 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 					{exercise ? <ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} /> : null}
 				</Dialog>
 				<div className="w-full flex flex-col gap-10 mb-10">
-					{Object.entries(displayExerciseList).map(exercise => (
-						<Dialog key={exercise[0]} open={outerDialogOpen}>
-							<div className="w-full md:w-1/2" onClick={e => handleExerciseCardOnClick(e)}>
-								<ExerciseCard exercise={exercise[1]} deleteExerciseFromDB={deleteExerciseFromDB} innerDialogOpen={innerDialogOpen} setInnerDialogOpen={setInnerDialogOpen} />
-							</div>
-							<ExerciseDialog exercise={exercise[1]} exerciseList={exerciseList} updateExerciseList={updateExerciseList} setOuterDialogOpen={setOuterDialogOpen} />
-						</Dialog>
+					{Object.entries(displayExerciseList).map(([exercise_id, exercise_item]) => (
+						<ExerciseCard
+							key={exercise_id}
+							exercise={exercise_item}
+							deleteExerciseFromDB={deleteExerciseFromDB}
+							exerciseList={exerciseList}
+							updateExerciseList={updateExerciseList}
+						/>
 					))}
 				</div>
 			</div>

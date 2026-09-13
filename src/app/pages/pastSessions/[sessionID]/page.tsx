@@ -1,6 +1,6 @@
 "use client";
 
-import ExerciseIconDropdownMenu from "@/components/custom/ExerciseIcon";
+import ExerciseIcon from "@/components/custom/ExerciseIcon";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
@@ -10,7 +10,6 @@ import {ChevronLeft} from "lucide-react";
 import Link from "next/link";
 import {useParams} from "next/navigation";
 import {useEffect, useState} from "react";
-import ExerciseIcon from "../../../../components/custom/ExerciseIcon";
 
 export default function SessionDetails() {
 	const params = useParams(); // params is a promise
@@ -61,8 +60,6 @@ export default function SessionDetails() {
 		}
 	}, [session]);
 
-	console.log(exerciseList);
-
 	return (
 		<div className="max-w-(--breakpoint-md) flex flex-col items-center gap-6 mx-6 pb-6">
 			<Link href="/pages/pastSessions" className="absolute top-3 left-5">
@@ -79,7 +76,7 @@ export default function SessionDetails() {
 				<div key={index} className="w-full flex flex-col px-12 border bg-app-primary border-app-primary-border">
 					<div className="flex justify-center gap-4 px-4 pt-10">
 						{exercise.name}
-						<ExerciseIcon type={exercise.type} color="white" />
+						<ExerciseIcon method={exercise.method} color="white" />
 					</div>
 					<Table className="my-8">
 						<TableHeader>
@@ -90,7 +87,7 @@ export default function SessionDetails() {
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{Object.entries(exercise.data).map((set, index) => (
+							{Object.entries(exercise.data ?? {}).map((set, index) => (
 								<TableRow key={index}>
 									<TableCell className="text-center">{index + 1}</TableCell>
 									<TableCell className="text-center">{set[1].weight}</TableCell>

@@ -6,16 +6,20 @@ import {Button} from "../ui/button";
 import {MouseEvent, useEffect, useState} from "react";
 import axios from "axios";
 import {useQuery} from "@tanstack/react-query";
+import ExerciseDialog from "./ExerciseDialog";
 
 type ExerciseCardProps = {
 	exercise: ExerciseItem;
 	deleteExerciseFromDB: (exerciseID: string) => void;
-	innerDialogOpen: boolean;
-	setInnerDialogOpen: (open: boolean) => void;
+	exerciseList: Session["exerciseList"];
+	updateExerciseList: (exerciseID: string, data: ExerciseItem["data"], method: ExerciseItem["method"]) => void;
 };
 
-export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialogOpen, setInnerDialogOpen}: ExerciseCardProps) {
+export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseList, updateExerciseList}: ExerciseCardProps) {
+
 	const [prevSessionData, setPrevSessionData] = useState<ExerciseData>();
+	const [outerDialogOpen, setOuterDialogOpen] = useState(false);
+	const [innerDialogOpen, setInnerDialogOpen] = useState(false);
 
 	const numOfSets = 3;
 
@@ -48,6 +52,15 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 	const handleDeleteExercise = () => {
 		deleteExerciseFromDB(exercise.id);
 		setInnerDialogOpen(false);
+	};
+
+	const handleExerciseCardOnClick = (e: MouseEvent<HTMLDivElement>) => {
+		e.stopPropagation();
+		if (innerDialogOpen) {
+			setOuterDialogOpen(false);
+		} else {
+			setOuterDialogOpen(true);
+		}
 	};
 
 	// alert dialog for confirming if user wants to delete the exercise
@@ -151,33 +164,38 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, innerDialo
 	}
 
 	return (
-		<div className="bg-app-primary px-4 py-4 border border-app-primary-border rounded-xl flex flex-col gap-4 focus:outline-none">
-			<div className="flex justify-between">
-				<div className="flex gap-4">
-					<div className="border border-app-primary-border rounded-md px-2 py-2">
-						<ExerciseIcon method={exercise.method} color="white" />
+		<Dialog open={outerDialogOpen}>
+			<div className="w-full md:w-1/2" onClick={e => handleExerciseCardOnClick(e)}>
+				<div className="bg-app-primary px-4 py-4 border border-app-primary-border rounded-xl flex flex-col gap-4 focus:outline-none">
+					<div className="flex justify-between">
+						<div className="flex gap-4">
+							<div className="border border-app-primary-border rounded-md px-2 py-2">
+								<ExerciseIcon method={exercise.method} color="white" />
+							</div>
+							<div className="mt-1 text-highlight">{exercise.name}</div>
+						</div>
+						<Dialog open={innerDialogOpen}>
+							<DialogOverlay className="bg-black/40 backdrop-blur-sm" />
+							<div onClick={e => handleCrossOnClick(e)}>
+								<svg className={`w-6 h-6 text-[#dd1c1a]`}>
+									<use href="/icons.svg#cross" />
+								</svg>
+							</div>
+							<AlertDialog />
+						</Dialog>
 					</div>
-					<div className="mt-1 text-highlight">{exercise.name}</div>
-				</div>
-				<Dialog open={innerDialogOpen}>
-					<DialogOverlay className="bg-black/40 backdrop-blur-sm" />
-					<div onClick={e => handleCrossOnClick(e)}>
-						<svg className={`w-6 h-6 text-[#dd1c1a]`}>
-							<use href="/icons.svg#cross" />
-						</svg>
+					<div className="grid grid-cols-[0.5fr_1fr_0.8fr_0.5fr] gap-4">
+						<div className="col-span-4 grid grid-cols-subgrid place-items-start text-neutral-400 uppercase">
+							<div>Set</div>
+							<div>Previous</div>
+							<div>Today</div>
+							<div>Progress</div>
+						</div>
+						<ExerciseSets />
 					</div>
-					<AlertDialog />
-				</Dialog>
-			</div>
-			<div className="grid grid-cols-[0.5fr_1fr_0.8fr_0.5fr] gap-4">
-				<div className="col-span-4 grid grid-cols-subgrid place-items-start text-neutral-400 uppercase">
-					<div>Set</div>
-					<div>Previous</div>
-					<div>Today</div>
-					<div>Progress</div>
 				</div>
-				<ExerciseSets />
 			</div>
-		</div>
+			<ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} setOuterDialogOpen={setOuterDialogOpen} />
+		</Dialog>
 	);
 }

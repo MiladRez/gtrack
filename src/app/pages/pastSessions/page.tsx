@@ -133,8 +133,6 @@ export default function PastSessions() {
 					return ""
 			}
 		}
-
-		// console.log(date)
 		
 		let linkHref = `/pages/pastSessions/${_id}`
 		const todayDate = new Date();

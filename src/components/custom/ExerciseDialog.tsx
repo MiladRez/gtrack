@@ -14,7 +14,7 @@ type ExerciseDialogProps = {
 	setOuterDialogOpen?: (open: boolean) => void;
 };
 
-export default function ExerciseDialog({exercise, exerciseList, updateExerciseList, removeExercise, setOuterDialogOpen}: ExerciseDialogProps) {
+export default function ExerciseDialog({exercise, updateExerciseList, removeExercise, setOuterDialogOpen}: ExerciseDialogProps) {
 	const [exerciseData, setExerciseData] = useState<ExerciseItem["data"]>(exercise.data);
 
 	const [selectedMethod, setSelectedMethod] = useState<ExerciseItem["method"]>(exercise.method);
