@@ -3,7 +3,7 @@
 import {useEffect, useState, MouseEvent} from "react";
 import ExerciseCard from "@/components/custom/ExerciseCard";
 import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
-import {ExerciseData, ExerciseItem, Session} from "@/utils/ExerciseTypes";
+import {ExerciseItem, Session} from "@/utils/ExerciseTypes";
 import axios from "axios";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";

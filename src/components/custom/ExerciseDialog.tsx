@@ -30,7 +30,7 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 		setSelectedMethod(exercise.method)
 	}, [exercise.method]);
 
-	const handleUpdateExerciseData = (exerciseData: ExerciseData) => {
+	const handleUpdateExerciseData = (exerciseData: ExerciseData | undefined) => {
 		setExerciseData(exerciseData);
 	};
 

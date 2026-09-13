@@ -6,7 +6,7 @@ import {ExerciseItem, ExerciseData} from "@/utils/ExerciseTypes";
 
 type ExerciseCardDialogProps = {
 	exercise: ExerciseItem | null,
-	handleUpdateExerciseData: (data: ExerciseData) => void
+	handleUpdateExerciseData: (data: ExerciseData | undefined) => void
 }
 
 export default function ExerciseCardDialog({exercise, handleUpdateExerciseData}: ExerciseCardDialogProps) {
