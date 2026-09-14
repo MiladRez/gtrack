@@ -234,6 +234,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 							deleteExerciseFromDB={deleteExerciseFromDB}
 							exerciseList={exerciseList}
 							updateExerciseList={updateExerciseList}
+							sessionID={sessionID}
 						/>
 					))}
 				</div>

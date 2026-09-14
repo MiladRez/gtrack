@@ -13,9 +13,10 @@ type ExerciseCardProps = {
 	deleteExerciseFromDB: (exerciseID: string) => void;
 	exerciseList: Session["exerciseList"];
 	updateExerciseList: (exerciseID: string, data: ExerciseItem["data"], method: ExerciseItem["method"]) => void;
+	sessionID: Session["_id"];
 };
 
-export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseList, updateExerciseList}: ExerciseCardProps) {
+export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseList, updateExerciseList, sessionID}: ExerciseCardProps) {
 
 	const [prevSessionData, setPrevSessionData] = useState<ExerciseData>();
 	const [outerDialogOpen, setOuterDialogOpen] = useState(false);
@@ -28,6 +29,7 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseLi
 			try {
 				const response = await axios.get("/api/getPrevExerciseData", {
 					params: {
+						sessionID: sessionID,
 						exerciseID: exercise.id,
 						type: exercise.group
 					}

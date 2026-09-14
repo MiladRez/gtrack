@@ -1,10 +1,9 @@
 import {ExerciseData, ExerciseItem, Session} from "@/utils/ExerciseTypes";
 import {Button} from "../ui/button";
-import {Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger} from "../ui/dialog";
+import {DialogClose, DialogContent, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle} from "../ui/dialog";
 import {FieldGroup} from "../ui/field";
-import ExerciseIconDropdownMenu from "./ExerciseIcon";
 import ExerciseCardDialog from "./ExerciseCardDialog";
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 
 type ExerciseDialogProps = {
 	exercise: ExerciseItem;
@@ -16,6 +15,7 @@ type ExerciseDialogProps = {
 
 export default function ExerciseDialog({exercise, updateExerciseList, removeExercise, setOuterDialogOpen}: ExerciseDialogProps) {
 	const [exerciseData, setExerciseData] = useState<ExerciseItem["data"]>(exercise.data);
+	const exerciseDataRef = useRef<ExerciseData | undefined>(exerciseData);
 
 	const [selectedMethod, setSelectedMethod] = useState<ExerciseItem["method"]>(exercise.method);
 
@@ -31,11 +31,12 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 	}, [exercise.method]);
 
 	const handleUpdateExerciseData = (exerciseData: ExerciseData | undefined) => {
+		exerciseDataRef.current = exerciseData;
 		setExerciseData(exerciseData);
 	};
 
 	const handleDialogSaveData = () => {
-		updateExerciseList(exercise.id, exerciseData, selectedMethod);
+		updateExerciseList(exercise.id, exerciseDataRef.current, selectedMethod);
 		setOuterDialogOpen?.(false);
 	};
 
@@ -53,8 +54,8 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 				<DialogHeader>
 					<DialogTitle>
 						<div className="px-1 mt-6 flex justify-between items-center gap-3">
-							<div className="flex flex-col items-start">
-								<div className="text-2xl">
+							<div className="flex flex-col text-start gap-2">
+								<div className="text-3xl text-highlight">
 									{exercise.name}	
 								</div>
 								<div className="text-[#a4a7b0] italic">
@@ -116,7 +117,7 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 							<DialogClose asChild>
 								<Button
 									className="py-6 md:py-0 bg-highlight w-full rounded-3xl"
-									onClick={() => handleDialogSaveData()}>
+									onClick={handleDialogSaveData}>
 									Save
 								</Button>
 							</DialogClose>	

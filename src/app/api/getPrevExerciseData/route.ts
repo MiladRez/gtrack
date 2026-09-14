@@ -1,9 +1,11 @@
 import clientPromise from "@/libs/mongodb";
+import {ObjectId} from "mongodb";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
 
 	const {searchParams} = new URL(request.url);
+	const sessionID = searchParams.get("sessionID");
 	const exerciseID = searchParams.get("exerciseID");
 	const sessionType = searchParams.get("type");
 
@@ -11,7 +13,12 @@ export async function GET(request: Request) {
 		return NextResponse.json({ error: "Missing exercise ID" }, { status: 400 });
 	}
 
+	if (!sessionID) {
+		return NextResponse.json({ error: "Missing session ID" }, { status: 400 });
+	}
+
 	const id = `exerciseList.${exerciseID}`;
+	const currentSessionID = ObjectId.createFromHexString(sessionID);
 
 	try {
 		const client = await clientPromise;
@@ -26,9 +33,10 @@ export async function GET(request: Request) {
 
 		const result = await collection.find(
 			{
-				type: sessionType,
-				[id]: {$exists: true}
-			}) // find doc by exercise id
+				_id: { $ne: currentSessionID}, // result should not be from current session
+				type: sessionType, // type should be session type : Push/Pull/Legs
+				[id]: {$exists: true} // exercise exists in session
+			})
 			.sort({date: -1})
 			.limit(1)
 			.next();

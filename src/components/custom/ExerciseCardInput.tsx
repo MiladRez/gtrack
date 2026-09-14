@@ -14,11 +14,13 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, hand
 
 	const [finalValue, setFinalValue] = useState(displayValues);
 
+	// when user clicks in on input field
 	const handleInputOnFocus = (e: React.FocusEvent<HTMLInputElement>) => {
 		const input = e.currentTarget;
 		requestAnimationFrame(() => input.setSelectionRange(0, input.value.length));
 	};
 
+	// every keystroke input
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
 		const inputValue = e.target.value === "" ? "" : Number(e.target.value);
 		const setString = e.target.name;
@@ -33,10 +35,10 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, hand
 				entryType === "weight" ? {weight: inputValue, reps: set.reps} : {weight: set.weight, reps: inputValue}
 			}
 		});
-		setFinalValue(displayValues);
 	}
 
-	const handleInputOnBlur = (e: React.ChangeEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
+	// when user clicks away from input field
+	const handleInputOnBlur = (e: React.FocusEvent<HTMLInputElement>, set: {weight: number, reps: number}, entryType: "weight" | "reps") => {
 		const inputValue = e.target.value === "" ? 0 : Number(e.target.value);
 		const setString = e.target.name;
 		
@@ -50,6 +52,7 @@ export default function ExerciseCardInput({displayValues, setDisplayValues, hand
 				entryType === "weight" ? { weight: inputValue, reps: set.reps } : { weight: set.weight, reps: inputValue }
 			}
 		});
+		setFinalValue(displayValues);
 	}
 
 	useEffectSkipFirstRender(() => {
