@@ -221,7 +221,9 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 									<DialogTrigger key={`${exercise.id}-${exercise.name}`} className="flex w-full rounded-sm py-2">
 										<DropdownMenuItem className="w-full flex justify-between" onClick={() => handleAddExercise(exercise)}>
 											{exercise.name}
-											<ExerciseIcon method={exercise.method} />
+											<div className="flex items-center">
+												<ExerciseIcon method={exercise.method} />
+											</div>
 										</DropdownMenuItem>
 									</DialogTrigger>
 								))}

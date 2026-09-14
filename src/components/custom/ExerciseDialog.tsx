@@ -4,6 +4,7 @@ import {DialogClose, DialogContent, DialogFooter, DialogHeader, DialogOverlay, D
 import {FieldGroup} from "../ui/field";
 import ExerciseCardDialog from "./ExerciseCardDialog";
 import {useEffect, useState, useRef} from "react";
+import ExerciseIcon from "./ExerciseIcon";
 
 type ExerciseDialogProps = {
 	exercise: ExerciseItem;
@@ -62,8 +63,8 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 									{exercise.group}
 								</div>
 							</div>
-							<div className="text-center text-highlight bg-[#102236] px-4 py-4 rounded-full w-1/4">
-								{exerciseMethods[selectedMethod]}
+							<div className="flex justify-center text-highlight bg-[#102236] px-4 py-4 rounded-full w-1/4">
+								<ExerciseIcon method={exercise.method} color="white" />
 							</div>
 						</div>
 					</DialogTitle>
@@ -84,7 +85,7 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 										onClick={() => setSelectedMethod(method as ExerciseItem["method"])}
 										className={["text-[#a4a7b0] px-3 py-4 rounded-3xl text-sm", isSelected ? "bg-app-primary" : ""].join(" ")}
 									>
-										<span className="px-2">{icon}</span>
+										<div className="flex justify-center px-2 pb-2"><ExerciseIcon method={method as ExerciseItem["method"]} color="white" /></div>
 										{method}
 									</button>
 								)
