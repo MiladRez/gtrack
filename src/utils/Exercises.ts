@@ -62,3 +62,8 @@ export const legExercisesList: ExerciseItem[] = Object.entries(legExercises).map
 		data: undefined
 	}
 })
+
+// export const allExercisesList: ExerciseItem[] = [...pushExercisesList, ...pullExercisesList, ...legExercisesList].map((exercise, index) => ({
+// 	...exercise,
+// 	id: String(index + 1),
+// }));

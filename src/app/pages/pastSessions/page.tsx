@@ -20,7 +20,7 @@ export default function PastSessions() {
 	const [pullSessionDates, setPullSessionDates] = useState<Date[]>([]);
 	const [legSessionDates, setLegSessionDates] = useState<Date[]>([]);
 
-	const [selectedDaySession, setSelectedDaySession] = useState<Session>();
+	const [selectedDaySessions, setSelectedDaySessions] = useState<Session[]>([]);
 	
 	const [currentDate, setCurrentDate] = useState<Date | undefined>(new Date());
 
@@ -69,7 +69,7 @@ export default function PastSessions() {
 	}, [sessions]);
 
 	useEffect(() => {
-		const todaysSession = sessions.filter(session => {
+		const todaysSessions = sessions.filter(session => {
 			const sessionDate = new Date(session.date);
 			sessionDate.setHours(sessionDate.getHours()+4)
 			return (
@@ -79,21 +79,20 @@ export default function PastSessions() {
 			);
 		});		
 
-		if (todaysSession.length > 0) {
-			const exerciseListMap = todaysSession[0].exerciseList;
-			const sessionDateFormat = new Date(todaysSession[0].date);
-			sessionDateFormat.setHours(sessionDateFormat.getHours()+4)
+		if (todaysSessions.length > 0) {
 
-			const sessionFormatted = {
-				_id: todaysSession[0]._id,
-				type: todaysSession[0].type,
-				date: sessionDateFormat,
-				exerciseList: exerciseListMap
-			}
+			const formattedTodaySessions = todaysSessions.map(session => {
+				const sessionDateFormat = new Date(session.date);
+				sessionDateFormat.setHours(sessionDateFormat.getHours() + 4)
 
-			setSelectedDaySession(sessionFormatted);
+				return {
+					...session,
+					date: sessionDateFormat,
+				}				
+			});
+			setSelectedDaySessions(formattedTodaySessions);
 		} else {
-			setSelectedDaySession(todaysSession[0]);
+			setSelectedDaySessions([]);
 		}
 	}, [currentDate, sessions]);
 
@@ -144,18 +143,18 @@ export default function PastSessions() {
 
 		return (
 			<Link href={linkHref} >
-				<div className={`absolute w-full flex text-sm mt-4 sm:mt-16 rounded-md py-3 px-4 ${SessionCardBackgroundColor()}`}>
+				<div className={`flex rounded-md sm:mt-16 py-3 px-4 ${SessionCardBackgroundColor()}`}>
 					<div className="w-full flex flex-col">
-						<h2>{type}</h2>
-						<p className="text-[0.7rem] sm:text-xs italic text-gray-700">
+						<h2 className="text-xl">{type}</h2>
+						<p className="sm:text-xs italic text-gray-700">
 							{Object.keys(exerciseList).length} exercise(s)
 						</p>
 					</div>
 					<div className="flex flex-col items-end">
-						<p className="text-xs whitespace-nowrap">
+						<p className="whitespace-nowrap">
 							{dateString}
 						</p>
-						<p className="text-[0.7rem] sm:text-xs uppercase">
+						<p className="sm:text-xs uppercase">
 							{timeString}
 						</p>
 					</div>
@@ -175,21 +174,22 @@ export default function PastSessions() {
 				<h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
 					Past Sessions
 				</h2>
-				<div className="scale-150 mt-16 sm:mt-40">
+				<div className="flex flex-col gap-2 scale-150 mt-16 sm:mt-40">
 					<Calendar
 						mode="single"
 						selected={currentDate}
 						onSelect={setCurrentDate}
 						modifiers={modifiers}
-						// modifiersStyles={modifiersStyles}
 						modifiersClassNames={modifiersClassNames}
 						className="rounded-md border border-app-primary-border bg-app-primary"
 					/>	
-					{selectedDaySession ? 
-						<SelectedSession session={selectedDaySession} />
-						:
-						null
-					}
+				</div>
+				<div className="w-full mt-12 flex flex-col gap-4">
+					{selectedDaySessions.map((session, index) => (
+						<div key={index}>
+							<SelectedSession session={session} />
+						</div>
+					))}
 				</div>
 			</div>
 		</div>

@@ -123,7 +123,8 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 	const deleteExerciseFromDB = (exerciseID: string) => {
 		const newExerciseList = removeExercise(exerciseID);
 		if (Object.keys(newExerciseList).length === 0) {
-			deleteFromDB.mutate(sessionID)
+			deleteFromDB.mutate(sessionID);
+			setSessionID("");
 		} else {
 			saveToDB.mutate(newExerciseList);
 		}
@@ -147,6 +148,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 			)
 		).then(res => res.data),
 		onSuccess: (newSet) => {
+			setSessionID(newSet["_id"]);
 			queryClient.setQueryData(["sessions"], (old: Session[]) => {
 				if (!old) return old; // safety check: if cache is empty/loading dont try to modify it, just leave it
 
@@ -162,7 +164,6 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 						: session
 					);
 				} else {
-					setSessionID(newSet["_id"]);
 					return [...old, newSet];
 				}				
 			});
@@ -211,11 +212,13 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 				<Dialog>
 					<DropdownMenu>
 						<DropdownMenuTrigger className="px-6 py-4 bg-slate-900 border border-slate-700 rounded-lg sm:mt-20">Add Exercise</DropdownMenuTrigger>
-						<DropdownMenuContent>
+						<DropdownMenuContent className="rounded-xl mt-4">
 							{getSessionExercises(sessionType)
-								.filter(excer => !exerciseList[excer.id])
+								.filter(excer => !Object.values(exerciseList).some(
+									(existingExercise) => existingExercise.id === excer.id && existingExercise.group === excer.group
+								))
 								.map(exercise => (
-									<DialogTrigger key={exercise.id} className="w-full flex">
+									<DialogTrigger key={`${exercise.id}-${exercise.name}`} className="flex w-full rounded-sm py-2">
 										<DropdownMenuItem className="w-full flex justify-between" onClick={() => handleAddExercise(exercise)}>
 											{exercise.name}
 											<ExerciseIcon method={exercise.method} />
@@ -227,7 +230,8 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 					{exercise ? <ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} /> : null}
 				</Dialog>
 				<div className="w-full flex flex-col gap-10 mb-10">
-					{Object.entries(displayExerciseList).map(([exercise_id, exercise_item]) => (
+					{
+						Object.entries(displayExerciseList).map(([exercise_id, exercise_item]) => (
 						<ExerciseCard
 							key={exercise_id}
 							exercise={exercise_item}

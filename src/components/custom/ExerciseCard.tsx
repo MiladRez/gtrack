@@ -31,7 +31,7 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseLi
 					params: {
 						sessionID: sessionID,
 						exerciseID: exercise.id,
-						type: exercise.group
+						group: exercise.group
 					}
 				});
 
@@ -40,11 +40,13 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseLi
 					setPrevSessionData(data);
 				}
 			} catch (error) {
-				console.error("Error fetching today's session: ", error);
+				console.error("Error fetching prev session: ", error);
 			}
 		};
-		getPrevExerciseData();
-	}, [exercise]);
+		if (sessionID) {
+			getPrevExerciseData();
+		}
+	}, [exercise, sessionID]);
 
 	const handleCrossOnClick = (e: MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
