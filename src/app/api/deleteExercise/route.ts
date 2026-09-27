@@ -1,8 +1,11 @@
 import clientPromise from "@/libs/mongodb";
+import {getUserSessionFilter, requireUserId} from "@/lib/auth";
 import {ObjectId} from "mongodb";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
+	const {error, userId} = await requireUserId();
+	if (error) return error;
 
 	try {
 		const client = await clientPromise;
@@ -15,7 +18,8 @@ export async function POST(request: Request) {
 		
 		const result = await collection.findOneAndDelete(
 			{
-				_id: ObjectId.createFromHexString(_id), 
+				_id: ObjectId.createFromHexString(_id),
+				...getUserSessionFilter(userId)
 			}
 		);
 

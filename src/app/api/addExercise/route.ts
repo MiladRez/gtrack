@@ -1,21 +1,13 @@
 import clientPromise from "@/libs/mongodb";
+import {getUserSessionFilter, requireUserId} from "@/lib/auth";
 import {ObjectId} from "mongodb";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-
-	const timezoneDiff = 4 // server JS always uses UTC date for some reason, client JS uses browser which is client's timezone
+	const {error, userId} = await requireUserId();
+	if (error) return error;
 
 	const today = new Date();
-	today.setHours(today.getHours() - timezoneDiff); // EST timezone
-	// const tomorrow = new Date();
-	// tomorrow.setDate(10);
-
-	// const dayStart = new Date();
-	// dayStart.setHours(0 - timezoneDiff, 0, 0, 0);
-
-	// const dayEnd = new Date();
-	// dayEnd.setHours(23 - timezoneDiff, 59, 59, 999);
 
 	try {
 		const client = await clientPromise;
@@ -31,12 +23,12 @@ export async function POST(request: Request) {
 		// update if already exists, create new if doesnt
 		if (_id !== "") {
 			result = await collection.findOneAndUpdate(
-				{ _id: ObjectId.createFromHexString(_id) }, // find doc by session id
-				{ $set: { exerciseList: exerciseList, date: today } }, // update exercise object
+				{ _id: ObjectId.createFromHexString(_id), ...getUserSessionFilter(userId) }, // find doc by session id
+				{ $set: { userId, exerciseList: exerciseList, date: today } }, // update exercise object
 				{ returnDocument: "after" } // return doc after its been updated
 			);
 		} else {
-			const doc = { type, exerciseList, date: today }
+			const doc = { userId, type, exerciseList, date: today }
 			const newSession = await collection.insertOne(doc);
 			result = { _id: newSession.insertedId, ...doc }
 		}

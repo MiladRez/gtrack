@@ -1,10 +1,8 @@
 "use client";
 
-import {useEffect, useState, MouseEvent} from "react";
+import {useEffect, useState} from "react";
 import ExerciseCard from "@/components/custom/ExerciseCard";
-import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
-import {ExerciseItem, Session} from "@/utils/ExerciseTypes";
-import axios from "axios";
+import {ExerciseData, ExerciseItem, Session, SessionSummary, TodaysSession} from "@/utils/ExerciseTypes";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {ChevronLeft} from "lucide-react";
@@ -22,37 +20,32 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 	const [sessionID, setSessionID] = useState<Session["_id"]>("");
 	const [exerciseList, setExerciseList] = useState<Session["exerciseList"]>({});
 	const [displayExerciseList, setDisplayExerciseList] = useState<Session["exerciseList"]>({});
+	const [previousExerciseData, setPreviousExerciseData] = useState<Record<string, ExerciseData>>({});
 	const [exercise, setExercise] = useState<ExerciseItem | null>(null);
 
 	useEffect(() => {
 		const getSessionType = async () => {
-			try {
-				const {sessionType} = await params;
-				setSessionType(sessionType.charAt(0).toUpperCase() + sessionType.slice(1));
-			} catch (e) {
-				console.log("Error fetching sessionType: ", e);
-			}
+			const {sessionType} = await params;
+			setSessionType(sessionType.charAt(0).toUpperCase() + sessionType.slice(1));
 		};
 		getSessionType();
-	}, []);
+	}, [params]);
 
 
-	//TODO - could use session id here, but not sure if I want to
 	useEffect(() => {
 		const getTodaysSession = async () => {
-			try {
-				const response = await axios.get("/api/getTodaysSession", {
-					params: {type: sessionType}
-				});
+			const response = await fetch(`/api/getTodaysSession?type=${encodeURIComponent(sessionType)}`);
 
-				const data = await response.data;
-				if (data) {
-					setSessionID(data._id);
-					setExerciseList(data.exerciseList);
-					setDisplayExerciseList(data.exerciseList);
-				}
-			} catch (error) {
-				console.error("Error fetching today's session: ", error);
+			if (!response.ok) {
+				throw new Error("Failed to fetch today's session");
+			}
+
+			const data: TodaysSession | null = await response.json();
+			if (data) {
+				setSessionID(data._id);
+				setExerciseList(data.exerciseList);
+				setDisplayExerciseList(data.exerciseList);
+				setPreviousExerciseData(data.previousExerciseData ?? {});
 			}
 		};
 		if (sessionType != "") {
@@ -60,11 +53,43 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 		}
 	}, [sessionType]);
 
+	const loadPreviousExerciseData = async (exerciseItem: ExerciseItem) => {
+		if (previousExerciseData[exerciseItem.id]) {
+			return;
+		}
+
+		const params = new URLSearchParams({
+			exerciseID: exerciseItem.id,
+			group: exerciseItem.group
+		});
+
+		if (sessionID) {
+			params.set("sessionID", sessionID);
+		}
+
+		const response = await fetch(`/api/getPrevExerciseData?${params.toString()}`);
+
+		if (!response.ok) {
+			throw new Error("Failed to fetch previous exercise data");
+		}
+
+		const data: ExerciseData | null = await response.json();
+
+		if (data) {
+			setPreviousExerciseData(prevState => ({
+				...prevState,
+				[exerciseItem.id]: data
+			}));
+		}
+	};
+
 	const handleAddExercise = (exerciseItem: ExerciseItem) => {
 		// check if exercise already in exerciseList list
 		if (exerciseList[exerciseItem.id]) {
-			console.log("Exercise already added.");
+			return;
 		} else {
+			void loadPreviousExerciseData(exerciseItem);
+
 			// adds selected exercise from dropdown list to exerciseList list
 			setExerciseList(prevState => {
 				const newExerciseList = {...prevState};
@@ -132,69 +157,74 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 	};
 
 	const saveToDB = useMutation({
-		mutationFn: (exerciseList: Session["exerciseList"]) => (
-			axios.post(
-				"/api/addExercise",
-				{
+		mutationFn: async (exerciseList: Session["exerciseList"]) => {
+			const response = await fetch("/api/addExercise", {
+				method: "POST",
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({
 					_id: sessionID,
 					type: sessionType,
 					exerciseList: exerciseList
-				},
-				{
-					headers: {
-						"Content-Type": "application/json"
-					}
-				}
-			)
-		).then(res => res.data),
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to save session");
+			}
+
+			return response.json();
+		},
 		onSuccess: (newSet) => {
 			setSessionID(newSet["_id"]);
-			queryClient.setQueryData(["sessions"], (old: Session[]) => {
+			queryClient.setQueryData(["sessions"], (old: SessionSummary[]) => {
 				if (!old) return old; // safety check: if cache is empty/loading dont try to modify it, just leave it
 
-				console.log("looking for _id:", newSet["_id"]);
-
-				const exists = old.some((session: Session) => session["_id"] === newSet["_id"]);
+				const exists = old.some((session: SessionSummary) => session["_id"] === newSet["_id"]);
+				const summary = {
+					_id: newSet["_id"],
+					type: newSet.type,
+					date: newSet.date,
+					exerciseCount: Object.keys(newSet.exerciseList ?? {}).length
+				};
 
 				if (exists) {
-					return old.map((session: Session) => session["_id"] === newSet["_id"] ? {
-						...session,
-						exerciseList: newSet.exerciseList
-					}
+					return old.map((session: SessionSummary) => session["_id"] === newSet["_id"] ? summary
 						: session
 					);
 				} else {
-					return [...old, newSet];
+					return [summary, ...old];
 				}				
 			});
 		}
 	})
 
 	const deleteFromDB = useMutation({
-		mutationFn: (sessionID: Session["_id"]) => (
-			axios.post(
-				"/api/deleteExercise",
-				{
+		mutationFn: async (sessionID: Session["_id"]) => {
+			const response = await fetch("/api/deleteExercise", {
+				method: "POST",
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({
 					_id: sessionID
-				},
-				{
-					headers: {
-						"Content-Type": "application/json"
-					}
-				}
-			)
-		).then(res => res.data),
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to delete session");
+			}
+
+			return response.json();
+		},
 		onSuccess: (deletedSession) => {
-			queryClient.setQueryData(["sessions"], (old: Session[]) => {
+			queryClient.setQueryData(["sessions"], (old: SessionSummary[]) => {
 				if (!old) return old;
 
-				return old.filter((session: Session) => session["_id"] !== deletedSession["_id"]);
+				return old.filter((session: SessionSummary) => session["_id"] !== deletedSession["_id"]);
 			});
 		}
 	});
 
 	return (
-		<div className="w-screen flex justify-center">
+		<div className="w-full flex justify-center">
 			<div className="max-w-(--breakpoint-md) w-full flex flex-col items-center gap-12 mx-4">
 				<div className="absolute w-full flex justify-between top-5 px-5">
 					<Link href="/" className="self-start">
@@ -240,7 +270,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 							deleteExerciseFromDB={deleteExerciseFromDB}
 							exerciseList={exerciseList}
 							updateExerciseList={updateExerciseList}
-							sessionID={sessionID}
+							prevSessionData={previousExerciseData[exercise_id]}
 						/>
 					))}
 				</div>

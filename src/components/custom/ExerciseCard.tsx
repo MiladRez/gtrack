@@ -1,11 +1,9 @@
 import {ExerciseItem, ExerciseData, Session} from "@/utils/ExerciseTypes";
 import ExerciseIcon from "./ExerciseIcon";
 import ProgressIcons from "./ProgressIcons";
-import {DialogTrigger, Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogOverlay} from "../ui/dialog";
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogOverlay} from "../ui/dialog";
 import {Button} from "../ui/button";
-import {MouseEvent, useEffect, useState} from "react";
-import axios from "axios";
-import {useQuery} from "@tanstack/react-query";
+import {MouseEvent, useState} from "react";
 import ExerciseDialog from "./ExerciseDialog";
 
 type ExerciseCardProps = {
@@ -13,40 +11,15 @@ type ExerciseCardProps = {
 	deleteExerciseFromDB: (exerciseID: string) => void;
 	exerciseList: Session["exerciseList"];
 	updateExerciseList: (exerciseID: string, data: ExerciseItem["data"], method: ExerciseItem["method"]) => void;
-	sessionID: Session["_id"];
+	prevSessionData?: ExerciseData;
 };
 
-export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseList, updateExerciseList, sessionID}: ExerciseCardProps) {
+export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseList, updateExerciseList, prevSessionData}: ExerciseCardProps) {
 
-	const [prevSessionData, setPrevSessionData] = useState<ExerciseData>();
 	const [outerDialogOpen, setOuterDialogOpen] = useState(false);
 	const [innerDialogOpen, setInnerDialogOpen] = useState(false);
 
 	const numOfSets = 3;
-
-	useEffect(() => {
-		const getPrevExerciseData = async () => {
-			try {
-				const response = await axios.get("/api/getPrevExerciseData", {
-					params: {
-						sessionID: sessionID,
-						exerciseID: exercise.id,
-						group: exercise.group
-					}
-				});
-
-				const data = await response.data;
-				if (data) {
-					setPrevSessionData(data);
-				}
-			} catch (error) {
-				console.error("Error fetching prev session: ", error);
-			}
-		};
-		if (sessionID) {
-			getPrevExerciseData();
-		}
-	}, [exercise, sessionID]);
 
 	const handleCrossOnClick = (e: MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();

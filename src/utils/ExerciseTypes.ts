@@ -27,3 +27,11 @@ export type Session = {
 	date: Date,
 	exerciseList: Record<string, ExerciseItem>
 }
+
+export type SessionSummary = Pick<Session, "_id" | "type" | "date"> & {
+	exerciseCount: number
+}
+
+export type TodaysSession = Session & {
+	previousExerciseData: Record<string, ExerciseData>
+}

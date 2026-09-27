@@ -4,8 +4,8 @@ import ExerciseIcon from "@/components/custom/ExerciseIcon";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import useEffectSkipFirstRender from "@/hooks/useEffectSkipFirstRender";
+import {APP_TIME_ZONE} from "@/lib/dates";
 import {ExerciseItem, Session} from "@/utils/ExerciseTypes";
-import axios from "axios";
 import {ChevronLeft} from "lucide-react";
 import Link from "next/link";
 import {useParams} from "next/navigation";
@@ -32,17 +32,15 @@ export default function SessionDetails() {
 
 	useEffectSkipFirstRender(() => {
 		const getSessionByID = async () => {
-			try {
-				const response = await axios.get("/api/getSessionByID", {
-					params: {id: sessionID}
-				});
+			const response = await fetch(`/api/getSessionByID?id=${encodeURIComponent(sessionID ?? "")}`);
 
-				const data = await response.data;
-				if (data) {
-					setSession(data);
-				}
-			} catch (error) {
-				console.error("Error fetching today's session: ", error);
+			if (!response.ok) {
+				throw new Error("Failed to fetch session");
+			}
+
+			const data: Session | null = await response.json();
+			if (data) {
+				setSession(data);
 			}
 		};
 		if (sessionID) {
@@ -53,8 +51,8 @@ export default function SessionDetails() {
 	useEffect(() => {
 		if (session) {
 			const sessionDate = new Date(session.date);
-			setDateString(`${sessionDate.toLocaleDateString("en-CA", {weekday: "short"})}, ${sessionDate.toLocaleDateString("en-CA", {month: "short"})} ${sessionDate.getDate()}, ${sessionDate.getFullYear()}`);
-			setTimeString(`${sessionDate.toLocaleTimeString("en-CA", {hour12: true, hour: "numeric", minute: "2-digit"})}`);
+			setDateString(`${sessionDate.toLocaleDateString("en-CA", {weekday: "short", timeZone: APP_TIME_ZONE})}, ${sessionDate.toLocaleDateString("en-CA", {month: "short", timeZone: APP_TIME_ZONE})} ${sessionDate.toLocaleDateString("en-CA", {day: "numeric", timeZone: APP_TIME_ZONE})}, ${sessionDate.toLocaleDateString("en-CA", {year: "numeric", timeZone: APP_TIME_ZONE})}`);
+			setTimeString(`${sessionDate.toLocaleTimeString("en-CA", {hour12: true, hour: "numeric", minute: "2-digit", timeZone: APP_TIME_ZONE})}`);
 
 			setExerciseList(Object.values(session.exerciseList));
 		}

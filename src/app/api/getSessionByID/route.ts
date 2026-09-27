@@ -1,8 +1,11 @@
 import clientPromise from "@/libs/mongodb";
+import {getUserSessionFilter, requireUserId} from "@/lib/auth";
 import {ObjectId} from "mongodb";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
+	const {error, userId} = await requireUserId();
+	if (error) return error;
 
 	const {searchParams} = new URL(request.url);
 	const sessionID = searchParams.get("id");
@@ -21,6 +24,7 @@ export async function GET(request: Request) {
 
 		const data = await collection.findOne({
 			_id: new ObjectId(sessionID),
+			...getUserSessionFilter(userId)
 		});
 
 		return NextResponse.json(data, {status: 200});
