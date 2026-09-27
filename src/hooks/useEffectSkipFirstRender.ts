@@ -10,7 +10,7 @@ const useEffectSkipFirstRender = (func: () => void, deps: React.DependencyList) 
 		} else {
 			func();
 		}
-    }, deps);
+    }, deps); // eslint-disable-line react-hooks/exhaustive-deps
 }
 
 export default useEffectSkipFirstRender;

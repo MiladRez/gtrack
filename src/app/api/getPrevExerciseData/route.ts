@@ -1,8 +1,11 @@
 import clientPromise from "@/libs/mongodb";
+import {getUserSessionFilter, requireUserId} from "@/lib/auth";
 import {ObjectId} from "mongodb";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
+	const {error, userId} = await requireUserId();
+	if (error) return error;
 
 	const {searchParams} = new URL(request.url);
 	const sessionID = searchParams.get("sessionID");
@@ -13,13 +16,11 @@ export async function GET(request: Request) {
 		return NextResponse.json({ error: "Missing exercise ID" }, { status: 400 });
 	}
 
-	if (!sessionID) {
-		return NextResponse.json({ error: "Missing session ID" }, { status: 400 });
-	}
-
 	const id = `exerciseList.${exerciseID}`;
 	const group = `exerciseList.${exerciseID}.group`;
-	const currentSessionID = ObjectId.createFromHexString(sessionID);
+	const currentSessionID = sessionID && ObjectId.isValid(sessionID)
+		? ObjectId.createFromHexString(sessionID)
+		: null;
 
 	try {
 		const client = await clientPromise;
@@ -28,7 +29,8 @@ export async function GET(request: Request) {
 
 		const result = await collection.find(
 			{
-				_id: { $ne: currentSessionID}, // result should not be from current session
+				...getUserSessionFilter(userId),
+				...(currentSessionID ? {_id: {$ne: currentSessionID}} : {}),
 				[group]: exerciseGroup, // type should be session type : Push/Pull/Legs
 				[id]: {$exists: true} // exercise exists in session
 			})

@@ -2,43 +2,47 @@
 
 import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar";
-import {Session} from "@/utils/ExerciseTypes";
-import axios from "axios";
+import {APP_TIME_ZONE, dateKeyToLocalDate, getDateKey} from "@/lib/dates";
+import {SessionSummary} from "@/utils/ExerciseTypes";
 import {ChevronLeft} from "lucide-react";
 import Link from "next/link";
 import {useEffect, useState} from "react";
 import "../../../styles/calendar.css"
 import {ModifiersClassNames} from "react-day-picker";
-import {isToday} from "date-fns";
 import {useQuery} from "@tanstack/react-query";
 
 export default function PastSessions() {
 
-	const [sessions, setSessions] = useState<Session[]>([]);
+	const [sessions, setSessions] = useState<SessionSummary[]>([]);
 
 	const [pushSessionDates, setPushSessionDates] = useState<Date[]>([]);
 	const [pullSessionDates, setPullSessionDates] = useState<Date[]>([]);
 	const [legSessionDates, setLegSessionDates] = useState<Date[]>([]);
 
-	const [selectedDaySessions, setSelectedDaySessions] = useState<Session[]>([]);
+	const [selectedDaySessions, setSelectedDaySessions] = useState<SessionSummary[]>([]);
 	
 	const [currentDate, setCurrentDate] = useState<Date | undefined>(new Date());
 
 	// data is cached sessions
 	const {data, isLoading} = useQuery({
 		queryKey: ["sessions"],
-		queryFn: () => axios.get("/api/getSessions").then(res => {console.log("from db: ", typeof(res.data.slice(-5)[0].exerciseList));return res.data}),
+		queryFn: async () => {
+			const response = await fetch("/api/getSessions");
+
+			if (!response.ok) {
+				throw new Error("Failed to fetch sessions");
+			}
+
+			return response.json() as Promise<SessionSummary[]>;
+		},
 		staleTime: 10_000
 	});
 
 	useEffect(() => {
-		if (isLoading) {
-			console.log("loaded: ", data)
-		} else {
+		if (!isLoading && data) {
 			setSessions(data)
-			console.log("unloaded: ", data.slice(-5))
 		}
-	}, [data]);
+	}, [data, isLoading]);
 
 	useEffect(() => {
 		const sessionsList = [
@@ -52,9 +56,7 @@ export default function PastSessions() {
 		for (const s in sessionsList) {
 			const dates: Date[] = [];
 			sessionsList[s].map((session) => {
-				const date = new Date(session.date);
-				date.setHours(date.getHours() + 4);
-				dates.push(date)
+				dates.push(dateKeyToLocalDate(getDateKey(session.date)))
 			});
 
 			if (sessionsList[s].length > 0) {
@@ -69,14 +71,9 @@ export default function PastSessions() {
 	}, [sessions]);
 
 	useEffect(() => {
+		const selectedDateKey = currentDate ? getDateKey(currentDate) : "";
 		const todaysSessions = sessions.filter(session => {
-			const sessionDate = new Date(session.date);
-			sessionDate.setHours(sessionDate.getHours()+4)
-			return (
-				sessionDate.getFullYear() === currentDate?.getFullYear() &&
-				sessionDate.getMonth() === currentDate.getMonth() &&
-				sessionDate.getDate() === currentDate.getDate()
-			);
+			return getDateKey(session.date) === selectedDateKey;
 		});		
 
 		if (todaysSessions.length > 0) {
@@ -90,7 +87,7 @@ export default function PastSessions() {
 					date: sessionDateFormat,
 				}				
 			});
-			setSelectedDaySessions(formattedTodaySessions);
+			setSelectedDaySessions(formattedTodaySessions as SessionSummary[]);
 		} else {
 			setSelectedDaySessions([]);
 		}
@@ -113,12 +110,12 @@ export default function PastSessions() {
 		legDays: "[&>button]:rounded-full text-primary [&>button]:bg-[radial-gradient(circle,#1C82AD_60%,transparent_100%)] [&>button:hover]:text-primary-foreground [&:hover]:bg-transparent [&]:rounded-full",
 	}
 
-	const SelectedSession = ({session}: {session: Session}) => {
+	const SelectedSession = ({session}: {session: SessionSummary}) => {
 
-		const {_id, type, date, exerciseList} = session;
+		const {_id, type, date, exerciseCount} = session;
 
-		const dateString = `${date.toLocaleDateString("en-CA", {weekday: "short"})}, ${date.toLocaleDateString("en-CA", {month: "short"})} ${date.getDate()}, ${date.getFullYear()}`
-		const timeString = `${date.toLocaleTimeString("en-CA", {hour12: true, hour: "numeric", minute: "2-digit"})}`
+		const dateString = `${date.toLocaleDateString("en-CA", {weekday: "short", timeZone: APP_TIME_ZONE})}, ${date.toLocaleDateString("en-CA", {month: "short", timeZone: APP_TIME_ZONE})} ${date.toLocaleDateString("en-CA", {day: "numeric", timeZone: APP_TIME_ZONE})}, ${date.toLocaleDateString("en-CA", {year: "numeric", timeZone: APP_TIME_ZONE})}`
+		const timeString = `${date.toLocaleTimeString("en-CA", {hour12: true, hour: "numeric", minute: "2-digit", timeZone: APP_TIME_ZONE})}`
 
 		const SessionCardBackgroundColor = () => {
 			switch (type) {
@@ -134,10 +131,7 @@ export default function PastSessions() {
 		}
 		
 		let linkHref = `/pages/pastSessions/${_id}`
-		const todayDate = new Date();
-		if (date.getFullYear() === todayDate?.getFullYear() &&
-			date.getMonth() === todayDate.getMonth() &&
-			date.getDate() === todayDate.getDate()) {
+		if (getDateKey(date) === getDateKey(new Date())) {
 			linkHref = `/pages/${type.toLowerCase()}`
 		}
 
@@ -147,7 +141,7 @@ export default function PastSessions() {
 					<div className="w-full flex flex-col">
 						<h2 className="text-xl">{type}</h2>
 						<p className="sm:text-xs italic text-gray-700">
-							{Object.keys(exerciseList).length} exercise(s)
+							{exerciseCount} exercise(s)
 						</p>
 					</div>
 					<div className="flex flex-col items-end">
@@ -164,7 +158,7 @@ export default function PastSessions() {
 	}
 
 	return (
-		<div className="w-screen flex justify-center">
+		<div className="w-full flex justify-center">
 			<div className="max-w-(--breakpoint-md) w-full flex flex-col items-center gap-12 mx-4">
 				<Link href="/" className="self-start">
 					<Button variant="outline" size="icon" className="absolute bg-slate-900 border-slate-700 top-5 left-5 sm:mt-20">

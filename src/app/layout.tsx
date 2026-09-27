@@ -1,7 +1,7 @@
 import type {Metadata} from "next";
 import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
-import {ClerkProvider, Show, SignInButton, SignUpButton, UserButton} from "@clerk/nextjs";
+import {ClerkProvider, Show, SignInButton, UserButton} from "@clerk/nextjs";
 import Image from "next/image";
 import { Providers } from "./providers";
 
@@ -29,7 +29,7 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 				<ClerkProvider>
-					<header className="flex justify-center items-center h-screen">
+					<header className="flex justify-center items-center min-h-dvh">
 						<Show when="signed-out">
 							<SignInButton mode="modal">
 								<div className="flex flex-col">
@@ -47,7 +47,7 @@ export default function RootLayout({
 							</SignInButton>
 						</Show>
 						<Show when="signed-in">
-							<div className="flex flex-col h-full w-full">
+							<div className="flex flex-col min-h-dvh w-full">
 								<div className="self-center mt-6 z-10">
 									<UserButton />
 								</div>

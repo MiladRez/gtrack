@@ -20,12 +20,7 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 
 	const [selectedMethod, setSelectedMethod] = useState<ExerciseItem["method"]>(exercise.method);
 
-	const exerciseMethods: Record<ExerciseItem["method"], string> = {
-		"Dumbbells": "[|━|]",
-		"Machine": "⚙",
-		"Barbell": "—",
-		"Cable": "⊙"
-	}
+	const exerciseMethods: ExerciseItem["method"][] = ["Dumbbells", "Machine", "Barbell", "Cable"];
 
 	useEffect(() => {
 		setSelectedMethod(exercise.method)
@@ -73,7 +68,7 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 					<div>
 						<div className="text-[#a4a7b0] py-4 px-1 font-semibold">Method</div>
 						<div className="grid grid-cols-2 bg-app-secondary rounded-3xl py-0.5 px-0.5">
-							{Object.entries(exerciseMethods).map(([method, icon]) => {
+							{exerciseMethods.map((method) => {
 								const isSelected = selectedMethod === method;
 
 								return (
@@ -82,10 +77,10 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 										type="button"
 										role="radio"
 										aria-checked={isSelected}
-										onClick={() => setSelectedMethod(method as ExerciseItem["method"])}
+										onClick={() => setSelectedMethod(method)}
 										className={["text-[#a4a7b0] px-3 py-4 rounded-3xl text-sm", isSelected ? "bg-app-primary" : ""].join(" ")}
 									>
-										<div className="flex justify-center px-2 pb-2"><ExerciseIcon method={method as ExerciseItem["method"]} color="white" /></div>
+										<div className="flex justify-center px-2 pb-2"><ExerciseIcon method={method} color="white" /></div>
 										{method}
 									</button>
 								)
