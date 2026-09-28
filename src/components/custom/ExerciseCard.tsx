@@ -43,20 +43,20 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseLi
 	// alert dialog for confirming if user wants to delete the exercise
 	const AlertDialog = () => {
 		return (
-			<DialogContent className="bg-app-primary border border-app-primary-border" onClick={e => e.stopPropagation()} onPointerDownOutside={() => setInnerDialogOpen(false)}>
+				<DialogContent className="rounded-[2rem] border-white/10 bg-black/75 text-white shadow-[0_24px_80px_rgba(0,0,0,0.65)] backdrop-blur-2xl" onClick={e => e.stopPropagation()} onPointerDownOutside={() => setInnerDialogOpen(false)}>
 				<DialogHeader>
 					<DialogTitle>
-						<div className="flex flex-col items-center gap-3 mb-4 text-highlight">Are you sure you want to remove this exercise?</div>
+							<div className="mb-4 flex flex-col items-center gap-3 text-white">Remove this exercise?</div>
 					</DialogTitle>
 				</DialogHeader>
 				<DialogFooter>
 					<DialogClose asChild>
-						<Button variant="destructive" className="py-6 md:py-0 border border-app-primary-border" onClick={handleDeleteExercise}>
+							<Button variant="destructive" className="rounded-2xl border border-red-400/20 bg-red-500/20 py-6 text-red-100 md:py-0" onClick={handleDeleteExercise}>
 							Remove
 						</Button>
 					</DialogClose>
 					<DialogClose asChild>
-						<Button className="py-6 md:py-0 border border-app-primary-border bg-app-tertiary" onClick={() => setInnerDialogOpen(false)}>
+							<Button className="apple-button py-6 md:py-0" onClick={() => setInnerDialogOpen(false)}>
 							Cancel
 						</Button>
 					</DialogClose>
@@ -145,26 +145,26 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseLi
 	return (
 		<Dialog open={outerDialogOpen}>
 			<div className="w-full md:w-1/2" onClick={e => handleExerciseCardOnClick(e)}>
-				<div className="bg-app-primary px-4 py-4 border border-app-primary-border rounded-xl flex flex-col gap-4 focus:outline-none">
+				<div className="glass-panel flex flex-col gap-5 rounded-[1.75rem] px-4 py-4 focus:outline-none">
 					<div className="flex justify-between">
-						<div className="flex gap-4">
-							<div className="border border-app-primary-border rounded-md px-2 py-2">
+						<div className="flex gap-3">
+							<div className="flex size-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.07]">
 								<ExerciseIcon method={exercise.method} color="white" />
 							</div>
-							<div className="mt-1 text-highlight">{exercise.name}</div>
+							<div className="mt-1 text-lg font-semibold tracking-tight text-white">{exercise.name}</div>
 						</div>
 						<Dialog open={innerDialogOpen}>
 							<DialogOverlay className="bg-black/40 backdrop-blur-sm" />
-							<div onClick={e => handleCrossOnClick(e)}>
-								<svg className={`w-6 h-6 text-[#dd1c1a]`}>
+							<div className="rounded-full p-1 text-red-300/80" onClick={e => handleCrossOnClick(e)}>
+								<svg className="h-6 w-6">
 									<use href="/icons.svg#cross" />
 								</svg>
 							</div>
 							<AlertDialog />
 						</Dialog>
 					</div>
-					<div className="grid grid-cols-[0.5fr_1fr_0.8fr_0.5fr] gap-4">
-						<div className="col-span-4 grid grid-cols-subgrid place-items-start text-neutral-400 uppercase">
+					<div className="grid grid-cols-[0.5fr_1fr_0.8fr_0.5fr] gap-x-3 gap-y-4">
+						<div className="col-span-4 grid grid-cols-subgrid place-items-start text-xs font-medium uppercase tracking-[0.12em] text-white/38">
 							<div>Set</div>
 							<div>Previous</div>
 							<div>Today</div>

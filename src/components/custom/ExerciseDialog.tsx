@@ -40,7 +40,7 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 		<DialogPortal>
 			<DialogOverlay className="bg-black/40 backdrop-blur-sm" />
 			<DialogContent
-				className="sm:max-w-sm border border-slate-900 rounded-3xl bg-app-primary"
+				className="max-h-[92dvh] overflow-y-auto rounded-[2rem] border-white/10 bg-black/75 text-white shadow-[0_24px_80px_rgba(0,0,0,0.65)] backdrop-blur-2xl sm:max-w-sm"
 				onPointerDownOutside={() => {
 					removeExercise?.(exercise.id);
 					setOuterDialogOpen?.(false);
@@ -49,16 +49,16 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 			>
 				<DialogHeader>
 					<DialogTitle>
-						<div className="px-1 mt-6 flex justify-between items-center gap-3">
+						<div className="mt-6 flex items-center justify-between gap-3 px-1">
 							<div className="flex flex-col text-start gap-2">
-								<div className="text-3xl text-highlight">
+								<div className="text-3xl font-semibold tracking-tight text-white">
 									{exercise.name}	
 								</div>
-								<div className="text-[#a4a7b0] italic">
+								<div className="text-sm font-medium uppercase tracking-[0.16em] text-white/40">
 									{exercise.group}
 								</div>
 							</div>
-							<div className="flex justify-center text-highlight bg-[#102236] px-4 py-4 rounded-full w-1/4">
+							<div className="flex size-14 items-center justify-center rounded-3xl border border-white/10 bg-white/[0.08] text-white">
 								<ExerciseIcon method={exercise.method} color="white" />
 							</div>
 						</div>
@@ -66,8 +66,8 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 				</DialogHeader>
 				<FieldGroup>
 					<div>
-						<div className="text-[#a4a7b0] py-4 px-1 font-semibold">Method</div>
-						<div className="grid grid-cols-2 bg-app-secondary rounded-3xl py-0.5 px-0.5">
+						<div className="px-1 py-4 text-sm font-semibold text-white/55">Method</div>
+						<div className="grid grid-cols-2 rounded-[1.5rem] border border-white/10 bg-white/[0.06] p-1">
 							{exerciseMethods.map((method) => {
 								const isSelected = selectedMethod === method;
 
@@ -78,7 +78,7 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 										role="radio"
 										aria-checked={isSelected}
 										onClick={() => setSelectedMethod(method)}
-										className={["text-[#a4a7b0] px-3 py-4 rounded-3xl text-sm", isSelected ? "bg-app-primary" : ""].join(" ")}
+										className={["rounded-[1.25rem] px-3 py-4 text-sm text-white/55 transition active:scale-[0.98]", isSelected ? "bg-white/[0.14] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.10)]" : ""].join(" ")}
 									>
 										<div className="flex justify-center px-2 pb-2"><ExerciseIcon method={method} color="white" /></div>
 										{method}
@@ -90,7 +90,7 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 				</FieldGroup>
 				<FieldGroup>
 					<div>
-						<div className="text-[#a4a7b0] py-4 px-1 font-semibold">Sets</div>
+						<div className="px-1 py-4 text-sm font-semibold text-white/55">Sets</div>
 						<ExerciseCardDialog key={exercise?.id} exercise={exercise} handleUpdateExerciseData={handleUpdateExerciseData} />
 					</div>
 				</FieldGroup>
@@ -99,7 +99,7 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 						<div className="col-span-1">
 							<DialogClose asChild>
 								<Button
-									className="py-6 md:py-0 bg-app-secondary text-red-400 w-full rounded-3xl"
+									className="w-full rounded-3xl border border-red-400/20 bg-red-500/15 py-6 text-red-100 md:py-0"
 									onClick={() => {
 										removeExercise?.(exercise.id);
 										setOuterDialogOpen?.(false);
@@ -112,7 +112,7 @@ export default function ExerciseDialog({exercise, updateExerciseList, removeExer
 						<div className="col-span-2">
 							<DialogClose asChild>
 								<Button
-									className="py-6 md:py-0 bg-highlight w-full rounded-3xl"
+									className="w-full rounded-3xl border border-white/10 bg-white text-black py-6 font-semibold md:py-0"
 									onClick={handleDialogSaveData}>
 									Save
 								</Button>
