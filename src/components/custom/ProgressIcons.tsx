@@ -1,10 +1,10 @@
 type ProgressIconsProps = {
 	type: "equals" | "down-arrow" | "up-arrow"
-	color?: "black" | "white"
+	color?: "black" | "white" | "neutral"
 }
 
 export default function ProgressIcons({type, color = "black"}: ProgressIconsProps) {
-	const colorClass = color === "white" ? "text-white" : "text-black";
+	const colorClass = color === "white" ? "text-white" : color === "neutral" ? "text-neutral-400" : "text-black";
 	const iconClass = `${colorClass} fill-current`;
 
 	switch (type) {
