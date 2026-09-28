@@ -29,26 +29,27 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 				<ClerkProvider>
-					<header className="flex justify-center items-center min-h-dvh">
+					<header className="flex min-h-dvh justify-center">
 						<Show when="signed-out">
 							<SignInButton mode="modal">
-								<div className="flex flex-col">
+								<div className="flex min-h-dvh flex-col items-center justify-center gap-6">
 									<Image
 										src="/gtrack-logo.png"
 										alt="app logo"
 										width={180}
 										height={180}
 										loading="eager"
+										className="drop-shadow-[0_16px_40px_rgba(10,132,255,0.22)]"
 									/>
-									<button className="bg-app-primary border border-app-primary-border px-4 py-2 rounded-xl">
+									<button className="apple-button px-8 py-3 text-sm font-semibold">
 										Sign In
 									</button>
 								</div>
 							</SignInButton>
 						</Show>
 						<Show when="signed-in">
-							<div className="flex flex-col min-h-dvh w-full">
-								<div className="self-center mt-6 z-10">
+							<div className="flex min-h-dvh w-full flex-col">
+								<div className="absolute left-1/2 top-4 z-50 -translate-x-1/2 mt-1.5">
 									<UserButton />
 								</div>
 								<Providers>

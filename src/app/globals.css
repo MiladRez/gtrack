@@ -48,15 +48,15 @@
   /* --color-app-primary: hsl(228, 10, 5);
   --color-app-primary-border: hsl(228, 10, 20); */
 
-  --color-app-primary: hsl(218.82, 80%, 5%);
-  --color-app-primary-border: hsl(218.82, 30%, 20%);
+  --color-app-primary: hsl(220, 18%, 8%);
+  --color-app-primary-border: hsl(220, 16%, 22%);
 
-  --color-app-secondary: hsl(224, 25, 12);
-  --color-app-secondary-border: hsl(224, 25, 15);
+  --color-app-secondary: hsl(220, 14%, 12%);
+  --color-app-secondary-border: hsl(220, 14%, 24%);
 
-  --color-app-tertiary: hsl(221.54, 11.11%, 54.12%);
+  --color-app-tertiary: hsl(220, 8%, 58%);
 
-  --color-highlight: hsl(210, 96.08%, 40%);
+  --color-highlight: hsl(211, 100%, 58%);
 
   --text-tiny: 0.625rem;
 }
@@ -81,31 +81,31 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --background: 220 28% 3%;
+    --foreground: 0 0% 96%;
+    --card: 220 18% 8%;
+    --card-foreground: 0 0% 96%;
+    --popover: 220 18% 9%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 211 100% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 13%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 220 12% 15%;
+    --muted-foreground: 220 8% 68%;
+    --accent: 211 100% 58%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --border: 220 14% 22%;
+    --input: 220 14% 18%;
+    --ring: 211 100% 58%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
+    --radius: 1rem
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -144,6 +144,53 @@
 }
 
 body {
-	@apply bg-black;
-	@apply text-white;
+	min-height: 100dvh;
+	@apply bg-black text-white antialiased;
+	background:
+		radial-gradient(circle at 50% -10%, rgba(10, 132, 255, 0.22), transparent 34rem),
+		radial-gradient(circle at 110% 8%, rgba(48, 209, 88, 0.08), transparent 22rem),
+		linear-gradient(180deg, #050506 0%, #0a0b0f 48%, #030304 100%);
+}
+
+html {
+	min-height: 100%;
+	background: #000;
+}
+
+body {
+	min-height: 100svh;
+	min-height: 100dvh;
+	background-color: #000;
+}
+
+button,
+a,
+input {
+	-webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+	background: rgba(10, 132, 255, 0.35);
+}
+
+@layer components {
+	.glass-panel {
+		@apply border border-white/10 bg-white/[0.075] shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl;
+	}
+
+	.glass-control {
+		@apply border border-white/10 bg-white/[0.08] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_12px_32px_rgba(0,0,0,0.35)] backdrop-blur-xl transition;
+	}
+
+	.glass-control:hover {
+		@apply bg-white/[0.12];
+	}
+
+	.apple-button {
+		@apply rounded-2xl border border-white/10 bg-white/[0.08] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_12px_32px_rgba(0,0,0,0.35)] backdrop-blur-xl transition active:scale-[0.98];
+	}
+
+	.page-shell {
+		@apply w-full min-h-dvh px-4 pb-10 pt-2;
+	}
 }

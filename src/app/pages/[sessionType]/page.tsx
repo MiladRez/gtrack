@@ -224,43 +224,46 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 	});
 
 	return (
-		<div className="w-full flex justify-center">
-			<div className="max-w-(--breakpoint-md) w-full flex flex-col items-center gap-12 mx-4">
-				<div className="absolute w-full flex justify-between top-5 px-5">
-					<Link href="/" className="self-start">
-						<Button variant="outline" size="icon" className="bg-slate-900 border-slate-700 sm:mt-20">
+		<div className="page-shell flex justify-center">
+			<div className="flex w-full max-w-(--breakpoint-md) flex-col gap-8 pt-1">
+				<div className="relative z-auto flex items-center justify-between">
+					<Link href="/" className="relative z-auto self-start">
+						<Button variant="outline" size="icon" className="glass-control size-11 rounded-full border-white/10 bg-black/30">
 							<ChevronLeft />
 						</Button>
 					</Link>
-					<Link href="/pages/pastSessions" className="sm:hidden">
-						<Button variant="ghost" className="underline px-0">
+					<Link href="/pages/pastSessions" className="relative z-auto sm:hidden">
+						<Button variant="ghost" className="h-11 rounded-full bg-black/25 px-4 text-white/70 backdrop-blur-xl">
 							Past Sessions
 						</Button>
 					</Link>
 				</div>
-				<h2 className="scroll-m-20 mt-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">{sessionType}</h2>
+				<div className="pt-8">
+					<p className="text-sm font-medium uppercase tracking-[0.16em] text-white/40">Today</p>
+					<h2 className="mt-2 text-5xl font-semibold tracking-tight text-white">{sessionType}</h2>
+				</div>
 				<Dialog>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button
 								size="icon"
 								aria-label="Add exercise"
-								className="fixed bottom-6 right-6 z-40 size-16 rounded-full border border-app-primary-border bg-highlight shadow-lg [&_svg]:!size-6"
+								className="fixed bottom-6 right-6 z-40 size-16 rounded-full border border-white/30 bg-white/[0.025] text-white shadow-[0_14px_36px_rgba(0,0,0,0.32),inset_0_1px_1px_rgba(255,255,255,0.28)] backdrop-blur-[3px] transition active:scale-95 [&_svg]:!size-6"
 							>
 								<Plus strokeWidth={2.75} />
 							</Button>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" side="top" className="rounded-xl mb-4 mr-2">
+						<DropdownMenuContent align="end" side="top" className="mb-4 mr-2 min-w-64 rounded-3xl border-white/10 bg-black/70 p-2 text-white shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-2xl">
 							{getSessionExercises(sessionType)
 								.filter(excer => !Object.values(exerciseList).some(
 									(existingExercise) => existingExercise.id === excer.id && existingExercise.group === excer.group
 								))
 								.map(exercise => (
-									<DialogTrigger key={`${exercise.id}-${exercise.name}`} className="flex w-full rounded-sm py-2">
-										<DropdownMenuItem className="w-full flex justify-between" onClick={() => handleAddExercise(exercise)}>
+									<DialogTrigger key={`${exercise.id}-${exercise.name}`} className="flex w-full rounded-2xl py-1">
+										<DropdownMenuItem className="flex w-full justify-between rounded-2xl px-4 py-3 text-base text-white/90 focus:bg-white/10 focus:text-white" onClick={() => handleAddExercise(exercise)}>
 											{exercise.name}
 											<div className="flex items-center">
-												<ExerciseIcon method={exercise.method} />
+												<ExerciseIcon method={exercise.method} color="white" />
 											</div>
 										</DropdownMenuItem>
 									</DialogTrigger>
@@ -269,7 +272,7 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 					</DropdownMenu>
 					{exercise ? <ExerciseDialog exercise={exercise} exerciseList={exerciseList} updateExerciseList={updateExerciseList} removeExercise={removeExercise} /> : null}
 				</Dialog>
-				<div className="w-full flex flex-col gap-10 mb-10">
+				<div className="mb-24 flex w-full flex-col gap-4">
 					{
 						Object.entries(displayExerciseList).map(([exercise_id, exercise_item]) => (
 						<ExerciseCard
