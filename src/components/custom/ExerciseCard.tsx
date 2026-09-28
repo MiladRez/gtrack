@@ -69,7 +69,7 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseLi
 
 		const displayCurrentExerciseData = (set: string) => {
 			if (exercise.data?.[set as keyof ExerciseData].weight == 0 || exercise.data?.[set as keyof ExerciseData].reps == 0) {
-				return <div className="text-muted-foreground place-self-start">-</div>;
+				return <div className="text-muted-foreground place-self-start w-[72.38px] text-center">-</div>;
 			} else {
 				return (
 					<div className="place-self-start">
@@ -80,14 +80,16 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseLi
 		};
 
 		const displayPreviousExerciseData = (set: string) => {
-			if (prevSessionData) {
+			const setData = prevSessionData?.[set as keyof ExerciseData];
+
+			if (setData && setData.weight !== 0 && setData.reps !== 0) {
 				return (
 					<div className="place-self-start">
-						{prevSessionData[set as keyof ExerciseData].weight} lbs x {prevSessionData[set as keyof ExerciseData].reps}
+						{setData.weight} lbs x {setData.reps}
 					</div>
 				);
 			} else {
-				return <div className="text-muted-foreground place-self-start">-</div>;
+				return <div className="text-muted-foreground place-self-start w-[72.38px] text-center">-</div>;
 			}
 		};
 
@@ -117,7 +119,7 @@ export default function ExerciseCard({exercise, deleteExerciseFromDB, exerciseLi
 			} else {
 				return (
 					<div className="place-self-center">
-						<ProgressIcons type="equals" color="white" />
+						<ProgressIcons type="equals" color="neutral" />
 					</div>
 				);
 			}

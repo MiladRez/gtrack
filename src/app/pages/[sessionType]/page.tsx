@@ -5,7 +5,7 @@ import ExerciseCard from "@/components/custom/ExerciseCard";
 import {ExerciseData, ExerciseItem, Session, SessionSummary, TodaysSession} from "@/utils/ExerciseTypes";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
-import {ChevronLeft} from "lucide-react";
+import {ChevronLeft, Plus} from "lucide-react";
 import ExerciseDialog from "@/components/custom/ExerciseDialog";
 import {Dialog, DialogTrigger} from "@/components/ui/dialog";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
@@ -241,8 +241,16 @@ export default function TodaysSessionPage({params}: {params: {sessionType: strin
 				<h2 className="scroll-m-20 mt-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">{sessionType}</h2>
 				<Dialog>
 					<DropdownMenu>
-						<DropdownMenuTrigger className="px-6 py-4 bg-slate-900 border border-slate-700 rounded-lg sm:mt-20">Add Exercise</DropdownMenuTrigger>
-						<DropdownMenuContent className="rounded-xl mt-4">
+						<DropdownMenuTrigger asChild>
+							<Button
+								size="icon"
+								aria-label="Add exercise"
+								className="fixed bottom-6 right-6 z-40 size-16 rounded-full border border-app-primary-border bg-highlight shadow-lg [&_svg]:!size-6"
+							>
+								<Plus strokeWidth={2.75} />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" side="top" className="rounded-xl mb-4 mr-2">
 							{getSessionExercises(sessionType)
 								.filter(excer => !Object.values(exerciseList).some(
 									(existingExercise) => existingExercise.id === excer.id && existingExercise.group === excer.group
